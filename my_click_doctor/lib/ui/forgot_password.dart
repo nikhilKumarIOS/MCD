@@ -10,7 +10,7 @@ import 'package:my_click_doctor/tabbar_view.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:http/http.dart' as http;
 
-import 'constants/LocalImages.dart';
+import '../constants/LocalImages.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({Key key}) : super(key: key);

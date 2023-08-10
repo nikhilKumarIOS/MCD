@@ -1,20 +1,15 @@
 import 'dart:convert';
-
 import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_click_doctor/services/api.dart';
 import 'package:my_click_doctor/services/dateFormater.dart';
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:http/http.dart' as http;
-import 'constants/LocalImages.dart';
-import 'constants/appConstants.dart';
+import '../constants/LocalImages.dart';
+import '../constants/appConstants.dart';
 import 'doctor_profile.dart';
-import 'main.dart';
 
 class TimeWindowManagementScreen extends StatefulWidget {
   const TimeWindowManagementScreen({Key key}) : super(key: key);

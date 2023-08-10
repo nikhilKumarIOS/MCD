@@ -4,31 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
+
 import 'package:my_click_doctor/tabbar_view.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'basic_infomation.dart';
 import 'doctor_profile.dart';
-import 'main.dart';
-
-// void main() {
-//   runApp(const CallScreen());
-// }
-
-// class CallScreen extends StatelessWidget {
-//   const CallScreen({Key? key}) : super(key: key);
-
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-//     return const MaterialApp(
-//       home: CallScreenPage(),
-//       debugShowCheckedModeBanner: false,
-//     );
-//   }
-// }
 
 class CallScreen extends StatefulWidget {
   const CallScreen({Key key}) : super(key: key);
@@ -68,7 +49,7 @@ class _CallScreenPageState extends State<CallScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Padding(
-                        padding: EdgeInsets.only(left: 20),
+                        padding: const EdgeInsets.only(left: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -141,7 +122,7 @@ class _CallScreenPageState extends State<CallScreen> {
                                                   height: h / 22,
                                                   width: h / 22,
                                                   fit: BoxFit.fill,
-                                                  image: AssetImage(
+                                                  image: const AssetImage(
                                                       'assets/female-user.png'),
                                                 ),
                                                 menuBuilder: () =>

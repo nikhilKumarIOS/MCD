@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_click_doctor/constants/LocalImages.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:my_click_doctor/constants/appConstants.dart';
 
 import 'package:my_click_doctor/services/router.dart';
 import 'dart:convert';
@@ -9,7 +10,12 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+import 'package:my_click_doctor/ui/login/login_bloc/login_events.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
+import '../../widgets/alerts.dart';
+import 'login_bloc/login_bloc.dart';
+import 'login_bloc/login_state.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key key}) : super(key: key);
@@ -19,15 +25,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController username_ = TextEditingController();
-  TextEditingController password_ = TextEditingController();
   final formKeyLogin = GlobalKey<FormState>();
   var client = http.Client();
   var call = false;
+  final _loginBloc = LoginBloc();
 
   void initState() {
     super.initState();
     // SystemChrome.setEnabledSystemUIOverlays([]);
+  }
+
+  @override
+  void dispose() {
+    _loginBloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -109,36 +120,41 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(10),
-                                          child: TextFormField(
-                                            controller: username_,
-                                            // obscureText: isMail,
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: w / 30,
-                                            ),
-                                            decoration: InputDecoration(
-
-                                                // hintText: 'Enter Email',
-
-                                                // hintStyle: TextStyle( color: Colors.white),
-
-                                                suffixIcon:
-                                                    const Icon(Icons.mail),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  borderSide: BorderSide.none,
+                                          child: StreamBuilder<String>(
+                                            stream: _loginBloc.usernameStream,
+                                            builder: (context, snapshot) {
+                                              return TextFormField(
+                                                onChanged: (username) {
+                                                  _loginBloc.handleEvent(
+                                                      UsernameChangedEvent(
+                                                          username));
+                                                },
+                                                validator: (value) {
+                                                  if (snapshot.hasError) {
+                                                    return snapshot.error;
+                                                  }
+                                                  return null;
+                                                },
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: w / 30,
                                                 ),
-                                                fillColor: const Color.fromARGB(
-                                                    239, 239, 247, 248),
-                                                filled: true),
-                                            validator: MultiValidator(
-                                              [
-                                                RequiredValidator(
-                                                    errorText:
-                                                        '*Email is required'),
-                                              ],
-                                            ),
+                                                decoration: InputDecoration(
+                                                    suffixIcon:
+                                                        const Icon(Icons.mail),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                    ),
+                                                    fillColor:
+                                                        const Color.fromARGB(
+                                                            239, 239, 247, 248),
+                                                    filled: true),
+                                              );
+                                            },
                                           ),
                                         ),
                                         Row(
@@ -164,38 +180,41 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                         Padding(
                                           padding: const EdgeInsets.all(10),
-                                          child: TextFormField(
-                                            controller: password_,
-                                            obscureText: true,
-
-                                            // obscureText: isMail,
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              fontSize: w / 30,
-                                            ),
-                                            decoration: InputDecoration(
-                                                // hintText: 'Enter Email',
-                                                // hintStyle: TextStyle( color: Colors.white),
-                                                suffixIcon:
-                                                    const Icon(Icons.key),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  borderSide: BorderSide.none,
+                                          child: StreamBuilder<String>(
+                                            stream: _loginBloc.passwordStream,
+                                            builder: (context, snapshot) {
+                                              return TextFormField(
+                                                onChanged: (password) {
+                                                  _loginBloc.handleEvent(
+                                                      PasswordChangedEvent(
+                                                          password));
+                                                },
+                                                validator: (value) {
+                                                  if (snapshot.hasError) {
+                                                    return snapshot.error;
+                                                  }
+                                                  return null;
+                                                },
+                                                style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontSize: w / 30,
                                                 ),
-                                                fillColor: const Color.fromARGB(
-                                                    239, 239, 247, 248),
-                                                filled: true),
-                                            validator: MultiValidator(
-                                              [
-                                                RequiredValidator(
-                                                    errorText:
-                                                        '*Password is required'),
-                                                // EmailValidator(
-                                                //     errorText:
-                                                //         "Please enter valid email")
-                                              ],
-                                            ),
+                                                decoration: InputDecoration(
+                                                    suffixIcon:
+                                                        const Icon(Icons.mail),
+                                                    border: OutlineInputBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      borderSide:
+                                                          BorderSide.none,
+                                                    ),
+                                                    fillColor:
+                                                        const Color.fromARGB(
+                                                            239, 239, 247, 248),
+                                                    filled: true),
+                                              );
+                                            },
                                           ),
                                         ),
                                         Padding(
@@ -227,75 +246,76 @@ class _LoginScreenState extends State<LoginScreen> {
                                         Padding(
                                           padding: const EdgeInsets.only(
                                               left: 20, right: 20, bottom: 20),
-                                          child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    20))),
-                                                minimumSize:
-                                                    const Size.fromHeight(50),
-                                                backgroundColor:
-                                                    const Color.fromARGB(
-                                                        159, 114, 190, 21),
-                                              ),
-                                              onPressed: () {
-                                                if (formKeyLogin.currentState
-                                                    .validate()) {
-                                                  login(username_.text.trim(),
-                                                      password_.text.trim());
+                                          child: StreamBuilder<LoginState>(
+                                            stream: _loginBloc.stateStream,
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                final state = snapshot.data;
+                                                if (state
+                                                    is LoadingLoginState) {
+                                                  return SizedBox(
+                                                      height: 30,
+                                                      width: 30,
+                                                      child:
+                                                          CircularProgressIndicator(
+                                                        color: AppColors.green,
+                                                      ));
+                                                } else if (state
+                                                    is ErrorLoginState) {
+                                                  return invalidUserNamePasswordAlert(
+                                                      context);
+                                                } else if (state
+                                                    is SuccessLoginState) {
+                                                  Navigator.pushNamed(context,
+                                                      RoutePaths.myTabBar);
                                                 }
-                                              },
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  SizedBox(
-                                                    width: w / 20,
-                                                  ),
-                                                  Text('LOGIN',
-                                                      style: TextStyle(
-                                                        fontSize: w / 30,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.black,
-                                                      )),
-                                                  const Icon(
-                                                    Icons.arrow_forward,
-                                                    color: Colors.black,
-                                                  )
-                                                ],
-                                              )),
+                                              }
+                                              return ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  shape:
+                                                      const RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          20))),
+                                                  minimumSize:
+                                                      const Size.fromHeight(50),
+                                                  backgroundColor:
+                                                      const Color.fromARGB(
+                                                          159, 114, 190, 21),
+                                                ),
+                                                onPressed: snapshot.data
+                                                        is SuccessLoginState
+                                                    ? null
+                                                    : () =>
+                                                        _loginBloc.handleEvent(
+                                                            SubmitLoginEvent()),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    SizedBox(
+                                                      width: w / 20,
+                                                    ),
+                                                    Text('LOGIN',
+                                                        style: TextStyle(
+                                                          fontSize: w / 30,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.black,
+                                                        )),
+                                                    const Icon(
+                                                      Icons.arrow_forward,
+                                                      color: Colors.black,
+                                                    )
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.center,
-                                        //   children: [
-                                        //     Text("Don't have an account? ",
-                                        //         style: TextStyle(
-                                        //           fontSize: w / 30,
-                                        //           fontWeight: FontWeight.w500,
-                                        //           color: Colors.grey[500],
-                                        //         )),
-                                        //     TextButton(
-                                        //         onPressed: () {
-                                        //           Navigator.pushNamed(
-                                        //               context,
-                                        //               RoutePaths
-                                        //                   .registerScreen);
-                                        //         },
-                                        //         child: Text("Register",
-                                        //             style: TextStyle(
-                                        //               fontSize: w / 30,
-                                        //               fontWeight:
-                                        //                   FontWeight.w600,
-                                        //               color: Colors.black,
-                                        //             ))),
-                                        //   ],
-                                        // )
                                       ],
                                     )
                                     //),
@@ -495,151 +515,5 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ))));
-  }
-
-  Future<Object> login(String username, String password) async {
-    print(username);
-    print(password);
-
-    var response = await client.post(
-      Uri.parse('https://api.myclickdoctor.com/v3/api/Account/Login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'Email': "fahadarshad0125@gmail.com", // username,
-        'Password': password,
-        'Usertype': 2.toString()
-      }),
-    );
-    if (response.statusCode == 200) {
-      final storage = FlutterSecureStorage(); //token
-      var Body = json.decode(response.body);
-
-      if (Body['code'] == 200) {
-        //doctortype//KeyOpinionLeader
-        var token = Body['token'];
-        var id = Body['id'];
-        var userId = Body['userId'];
-        var photo = Body['profilePhoto'];
-        var doctortype = Body['doctortype'];
-        var usern = username;
-        var pass = password;
-
-        print(token);
-        print(id);
-        print(userId);
-
-        storage.write(key: 'token', value: token);
-        storage.write(key: 'id', value: id.toString());
-        storage.write(key: 'userId', value: userId.toString());
-        storage.write(key: 'profilePhoto', value: photo.toString());
-        storage.write(key: 'username', value: usern.toString());
-        storage.write(key: 'password', value: pass.toString());
-        storage.write(key: 'dtype', value: doctortype);
-
-        return Navigator.pushNamed(context, RoutePaths.myTabBar);
-      } else {
-        return Alert(
-          closeIcon: null,
-          style: const AlertStyle(),
-          context: context,
-          padding: const EdgeInsets.all(20),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const <Widget>[
-              Image(
-                image: AssetImage(LocalImages.alert),
-                width: 50,
-                height: 50,
-              ),
-              SizedBox(height: 20),
-              Text("Alert",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  textAlign: TextAlign.center),
-              SizedBox(height: 5),
-              Text(
-                "Invalid user name or password!",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-          buttons: [
-            DialogButton(
-              margin: const EdgeInsets.only(left: 20),
-              color: const Color.fromARGB(159, 114, 190, 21),
-              radius: BorderRadius.circular(20),
-              onPressed: () async {
-                Navigator.pop(context);
-
-                // await Navigator.pushReplacementNamed(
-                //     context, RoutePaths.loginscreen);
-              },
-              child: const Text(
-                "Okay ",
-                style: TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ),
-          ],
-        ).show();
-      }
-    } else {
-      return Alert(
-        closeIcon: null,
-        style: const AlertStyle(),
-        context: context,
-        padding: const EdgeInsets.all(20),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Image(
-              image: AssetImage(LocalImages.alert),
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(height: 20),
-            Text("Alert",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center),
-            SizedBox(height: 5),
-            Text(
-              "Something went wrong",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-        buttons: [
-          DialogButton(
-            margin: const EdgeInsets.only(left: 20),
-            color: const Color.fromARGB(159, 114, 190, 21),
-            radius: BorderRadius.circular(20),
-            onPressed: () async {
-              Navigator.pop(context);
-
-              // await Navigator.pushReplacementNamed(
-              //     context, RoutePaths.loginscreen);
-            },
-            child: const Text(
-              "Okay ",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
-      ).show();
-    }
   }
 }

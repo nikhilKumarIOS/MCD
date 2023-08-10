@@ -9,13 +9,13 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:my_click_doctor/services/api.dart';
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
+
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:http/http.dart' as http;
-import 'constants/LocalImages.dart';
-import 'constants/appConstants.dart';
+
+import '../constants/LocalImages.dart';
+import '../constants/appConstants.dart';
 import 'doctor_profile.dart';
-import 'main.dart';
 
 // void main() {
 //   runApp(const BasicInformationScreen());
@@ -2528,7 +2528,7 @@ class _BasicInformationScreenPageState extends State<BasicInformationScreen> {
                                         ],
                                       ),
                                     )),
-                                SizedBox(
+                                const SizedBox(
                                   height: 100,
                                 )
                               ],

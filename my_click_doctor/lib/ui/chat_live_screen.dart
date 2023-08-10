@@ -3,13 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
+
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'basic_infomation.dart';
 import 'booking_appointment.dart';
 import 'doctor_profile.dart';
-import 'main.dart';
 
 class ChatLiveScreen extends StatefulWidget {
   const ChatLiveScreen({Key key}) : super(key: key);

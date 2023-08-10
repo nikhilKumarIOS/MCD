@@ -1,9 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:my_click_doctor/services/router.dart';
 
-import 'constants/LocalImages.dart';
+import '../constants/LocalImages.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({Key key}) : super(key: key);
@@ -18,7 +17,7 @@ class _SplashViewState extends State<SplashView> {
     super.initState();
     Timer(
         const Duration(seconds: 2),
-        () => Navigator.pushReplacementNamed(context, RoutePaths.chatLiveScreen,
+        () => Navigator.pushReplacementNamed(context, RoutePaths.loginscreen,
             arguments: true));
   }
 

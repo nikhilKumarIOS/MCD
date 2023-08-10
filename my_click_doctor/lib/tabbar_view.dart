@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'book_appointment_screen.dart';
-import 'call_screen.dart';
-import 'chat_screen.dart';
-import 'colleagues_screen.dart';
-import 'home_screen.dart';
+import 'package:my_click_doctor/ui/book_appointment_screen.dart';
+import 'package:my_click_doctor/ui/call_screen.dart';
+import 'package:my_click_doctor/ui/chat_screen.dart';
+import 'package:my_click_doctor/ui/colleagues_screen.dart';
+import 'package:my_click_doctor/ui/home_screen.dart';
 
 // void main() => runApp(const MyTabBar());
 

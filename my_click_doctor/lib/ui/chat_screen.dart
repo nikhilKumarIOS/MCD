@@ -3,13 +3,12 @@ import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
+
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'basic_infomation.dart';
 import 'chat_live_screen.dart';
 import 'doctor_profile.dart';
-import 'main.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key key}) : super(key: key);
@@ -519,7 +518,7 @@ class _ChatScreenPageState extends State<ChatScreen> {
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,
                                             )),
-                                      const  SizedBox(height: 5),
+                                        const SizedBox(height: 5),
                                         Text('Online',
                                             style: TextStyle(
                                               fontSize: w / 40,
@@ -597,7 +596,7 @@ class _ChatScreenPageState extends State<ChatScreen> {
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,
                                             )),
-                                      const  SizedBox(height: 5),
+                                        const SizedBox(height: 5),
                                         Text('Online',
                                             style: TextStyle(
                                               fontSize: w / 40,
@@ -668,7 +667,7 @@ class _ChatScreenPageState extends State<ChatScreen> {
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,
                                             )),
-                                      const  SizedBox(height: 5),
+                                        const SizedBox(height: 5),
                                         Text('Online',
                                             style: TextStyle(
                                               fontSize: w / 40,
@@ -739,7 +738,7 @@ class _ChatScreenPageState extends State<ChatScreen> {
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,
                                             )),
-                                      const  SizedBox(height: 5),
+                                        const SizedBox(height: 5),
                                         Text('Online',
                                             style: TextStyle(
                                               fontSize: w / 40,
@@ -975,7 +974,7 @@ class _ChatScreenPageState extends State<ChatScreen> {
                             ],
                           )),
                     ),
-                   const SizedBox(
+                    const SizedBox(
                       height: 100,
                     )
                   ],

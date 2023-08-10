@@ -3,14 +3,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
+
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import '../constants/LocalImages.dart';
 import 'basic_infomation.dart';
 import 'booking_appointment.dart';
-import 'constants/LocalImages.dart';
+
 import 'doctor_profile.dart';
-import 'main.dart';
 
 class BookAppointmentScreen extends StatefulWidget {
   const BookAppointmentScreen({Key key}) : super(key: key);
@@ -1094,7 +1094,7 @@ class _BookAppointmentScreenPageState extends State<BookAppointmentScreen> {
                                       fontSize: h / 68,
                                       fontWeight: FontWeight.w800),
                                 ),
-                              const SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 Padding(

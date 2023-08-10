@@ -5,36 +5,34 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
-class Api {
-  static const baseUrl = 'https://api.myclickdoctor.com/v3/api';
-  static const imageBaseUrl = 'https://api.myclickdoctor.com/v3/';
-  static const imageBaseUrl2 = 'https://api.myclickdoctor.com/v3';
+import '../constants/appConstants.dart';
 
-  var client = http.Client();
+class ApiService {
+  final http.Client _client = http.Client();
 
-  Future<String> login(String username, String password) async {
-    print(username);
-    print(password);
+  Future<Map<String, dynamic>> login(String username, String password) async {
+    final url = Uri.parse('${Api.baseUrl}Account/Login');
 
-    var response = await client.post(
-      Uri.parse('$baseUrl/Account/Login'),
+    final response = await _client.post(
+      url,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
         'Email': username,
         'Password': password,
-        'Usertype': 2.toString()
+        'Usertype': "2"
       }),
     );
+
     if (response.statusCode == 200) {
-      print(response);
-
-      //final storage = FlutterSecureStorage();
-
-      return "success";
+      return json.decode(response.body);
     } else {
-      return "Error";
+      throw Exception('Failed to login');
     }
+  }
+
+  void dispose() {
+    _client.close();
   }
 }

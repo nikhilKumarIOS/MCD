@@ -3,25 +3,26 @@
 //import 'dart:js';
 
 import 'package:flutter/material.dart';
-import 'package:my_click_doctor/booking_appointment.dart';
-import '../appointment_details.dart';
-import '../basic_infomation.dart';
-import '../book_appointment_screen.dart';
-import '../call_screen.dart';
-import '../chat_live_screen.dart';
-import '../chat_screen.dart';
-import '../colleagues_screen.dart';
-import '../doctor_profile.dart';
-import '../download_action.dart';
-import '../forgot_password.dart';
-import '../home_screen.dart';
-import '../loginView.dart';
-import '../register_screen.dart';
-import '../splashView.dart';
-import '../support_screen.dart';
+
 import '../tabbar_view.dart';
-import '../testing_mic.dart';
-import '../timeWindowManagementList.dart';
+
+import '../ui/appointment_details.dart';
+import '../ui/basic_infomation.dart';
+import '../ui/book_appointment_screen.dart';
+import '../ui/booking_appointment.dart';
+import '../ui/call_screen.dart';
+import '../ui/chat_live_screen.dart';
+import '../ui/chat_screen.dart';
+import '../ui/colleagues_screen.dart';
+import '../ui/doctor_profile.dart';
+import '../ui/forgot_password.dart';
+import '../ui/home_screen.dart';
+import '../ui/login/loginView.dart';
+import '../ui/register_screen.dart';
+import '../ui/splashView.dart';
+import '../ui/support_screen.dart';
+import '../ui/testing_mic.dart';
+import '../ui/timeWindowManagementList.dart';
 
 class RoutePaths {
   static const splash = '/splash';

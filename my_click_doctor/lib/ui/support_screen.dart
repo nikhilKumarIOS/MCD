@@ -9,7 +9,6 @@ import 'basic_infomation.dart';
 import 'booking_appointment.dart';
 import 'chat_live_screen.dart';
 import 'doctor_profile.dart';
-import 'main.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({Key key}) : super(key: key);

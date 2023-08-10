@@ -2,34 +2,15 @@ import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:my_click_doctor/chat_live_screen.dart';
+
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
+
 import 'package:my_click_doctor/tabbar_view.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'basic_infomation.dart';
 import 'booking_appointment.dart';
 import 'doctor_profile.dart';
-import 'main.dart';
-
-// void main() {
-//   runApp(const ColleaguesScreen());
-// }
-
-// class ColleaguesScreen extends StatelessWidget {
-//   const ColleaguesScreen({Key? key}) : super(key: key);
-
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-//     return const MaterialApp(
-//       home: ColleaguesScreenPage(),
-//       debugShowCheckedModeBanner: false,
-//     );
-//   }
-// }
 
 class ColleaguesScreen extends StatefulWidget {
   const ColleaguesScreen({Key key}) : super(key: key);

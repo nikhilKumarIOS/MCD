@@ -17,9 +17,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:zoom_widget/zoom_widget.dart';
-import 'constants/LocalImages.dart';
 
-import 'models/getTwoMinutesBefore.dart';
+import '../constants/LocalImages.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);

@@ -18,21 +18,18 @@ import 'package:my_click_doctor/models/downloadFileModel.dart';
 import 'package:my_click_doctor/services/api.dart';
 import 'package:my_click_doctor/services/dateFormater.dart';
 import 'package:my_click_doctor/services/router.dart';
-import 'package:my_click_doctor/support_screen.dart';
-import 'package:my_click_doctor/testing_mic.dart';
+
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:intl/intl.dart';
 //import 'package:ext_storage/ext_storage.dart';
 
 import 'doctor_profile.dart';
 import 'download_action.dart';
-import 'main.dart';
+
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'models/getAppointmentDetailsModel.dart';
 
 class AppointmentDetailScreen extends StatefulWidget {
   const AppointmentDetailScreen(this.AppointmentID, {Key key})
@@ -903,8 +900,8 @@ class _AppointmentDetailScreenPageState extends State<AppointmentDetailScreen> {
                                                       flex: 1,
                                                       child: Container(
                                                           padding:
-                                                           const   EdgeInsets.all(
-                                                                  10),
+                                                              const EdgeInsets
+                                                                  .all(10),
                                                           width: w / 1.2,
                                                           height: h / 40,
                                                           child: DottedBorder(
