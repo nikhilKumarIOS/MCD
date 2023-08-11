@@ -22,14 +22,6 @@ class LoginBloc {
   // Constructor
   LoginBloc() {
     _stateController.add(InitialLoginState());
-
-    // _usernameController.stream.listen((username) {
-    //   // Perform validation logic if needed
-    // });
-
-    // _passwordController.stream.listen((password) {
-    //   // Perform validation logic if needed
-    // });
   }
 
   // Handle events

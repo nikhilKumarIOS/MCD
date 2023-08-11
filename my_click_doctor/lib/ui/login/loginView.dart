@@ -266,8 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       context);
                                                 } else if (state
                                                     is SuccessLoginState) {
-                                                  Navigator.pushNamed(context,
-                                                      RoutePaths.myTabBar);
+                                                  _handleNavigation(context);
                                                 }
                                               }
                                               return ElevatedButton(
@@ -515,5 +514,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                 ))));
+  }
+
+  Future<void> _handleNavigation(BuildContext context) async {
+    await Future.delayed(Duration.zero);
+    Navigator.pushNamed(context, RoutePaths.myTabBar);
   }
 }

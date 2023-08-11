@@ -104,3 +104,64 @@ invalidUserNamePasswordAlert(context) {
     ],
   ).show();
 }
+
+cancelAppointmentAlert(id, context) {
+  Alert(
+    closeIcon: null,
+    style: AlertStyle(),
+    context: context,
+    padding: EdgeInsets.all(20),
+    content: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Image(
+          image: AssetImage("assets/cancel.png"),
+          width: 50,
+          height: 50,
+        ),
+        SizedBox(height: 20),
+        Text("CANCEL APPOINTMENT",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center),
+        SizedBox(height: 5),
+        Text(
+          "Are you sure you want to cancel the appointment",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 12,
+          ),
+        ),
+      ],
+    ),
+    buttons: [
+      DialogButton(
+        margin: const EdgeInsets.only(left: 20),
+        color: Colors.red[500],
+        radius: BorderRadius.circular(20),
+        onPressed: () {
+          Navigator.pop(context);
+          // cancelAppointment(
+          //     e["appointmentId"] ?? "");
+        },
+        child: const Text(
+          "Yes",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      ),
+      DialogButton(
+        margin: const EdgeInsets.only(right: 20, left: 10),
+        color: Colors.grey[800],
+        radius: BorderRadius.circular(20),
+        onPressed: () => Navigator.pop(context),
+        child: const Text(
+          "Cancel",
+          style: TextStyle(color: Colors.white, fontSize: 16),
+        ),
+      ),
+    ],
+  ).show();
+}

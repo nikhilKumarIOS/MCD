@@ -16,7 +16,7 @@ import '../ui/chat_screen.dart';
 import '../ui/colleagues_screen.dart';
 import '../ui/doctor_profile.dart';
 import '../ui/forgot_password.dart';
-import '../ui/home_screen.dart';
+import '../ui/home/home_screen.dart';
 import '../ui/login/loginView.dart';
 import '../ui/register_screen.dart';
 import '../ui/splashView.dart';

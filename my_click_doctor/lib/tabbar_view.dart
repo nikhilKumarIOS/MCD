@@ -3,7 +3,7 @@ import 'package:my_click_doctor/ui/book_appointment_screen.dart';
 import 'package:my_click_doctor/ui/call_screen.dart';
 import 'package:my_click_doctor/ui/chat_screen.dart';
 import 'package:my_click_doctor/ui/colleagues_screen.dart';
-import 'package:my_click_doctor/ui/home_screen.dart';
+import 'package:my_click_doctor/ui/home/home_screen.dart';
 
 // void main() => runApp(const MyTabBar());
 

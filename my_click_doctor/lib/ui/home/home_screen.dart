@@ -18,7 +18,10 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
-import '../constants/LocalImages.dart';
+import '../../constants/LocalImages.dart';
+import '../../widgets/alerts.dart';
+import 'home_bloc/home_bloc.dart';
+import 'home_bloc/home_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -47,14 +50,15 @@ class _HomePageState extends State<HomeScreen> {
   var doctorType = "";
 
   var client = http.Client();
+  final _doctorDashboardBloc = DoctorDashboardBloc();
   final popUpControler = CustomPopupMenuController();
   TextEditingController appointmentPurpose = TextEditingController();
   @override
   void initState() {
     super.initState();
 
-    getBookedAppointment();
-    getRecommendAppointment();
+    _doctorDashboardBloc.fetchRecommendedAndBookedAppointments();
+
     timer = Timer.periodic(
       Duration(seconds: 15),
       (Timer t) => getTodayAppointment(),
@@ -64,6 +68,7 @@ class _HomePageState extends State<HomeScreen> {
   @override
   void dispose() {
     timer?.cancel();
+    _doctorDashboardBloc.dispose();
     super.dispose();
   }
 
@@ -326,31 +331,13 @@ class _HomePageState extends State<HomeScreen> {
                                       maxZoomWidth: 2100,
                                       maxZoomHeight: 2100,
                                       child: Center(
-                                          // child:
-                                          //     WebView(
-                                          //   initialUrl: Uri.dataFromString(
-                                          //           '<html><body><iframe src="https://doctortest.medicalscan.hu/mcdreg/doc?tipus=slider" width="100%";height=1000px;></iframe></body></html>',
-                                          //           mimeType: 'text/html')
-                                          //       .toString(),
-                                          //   javascriptMode: JavascriptMode.unrestricted,
-                                          // )
                                           child: const WebView(
                                         zoomEnabled: true,
                                         initialUrl:
                                             'https://doctortest.medicalscan.hu/mcdreg/doc?tipus=slider',
                                         javascriptMode:
                                             JavascriptMode.unrestricted,
-                                      )))
-                                  //  Transform.translate(
-                                  //   offset: Offset(2, 2),
-                                  //   child: const WebView(
-                                  //     zoomEnabled: true,
-                                  //     initialUrl:
-                                  //         'https://doctortest.medicalscan.hu/mcdreg/doc?tipus=slider',
-                                  //     javascriptMode: JavascriptMode.unrestricted,
-                                  //   ),
-                                  // ),
-                                  ))
+                                      )))))
                           : SizedBox(),
                       (joinCallhideShow == true)
                           ? Padding(
@@ -384,7 +371,8 @@ class _HomePageState extends State<HomeScreen> {
                                                   children: <Widget>[
                                                     Image(
                                                       image: AssetImage(
-                                                          "assets/green-phone.png"),
+                                                          LocalImages
+                                                              .greenPhone),
                                                       width: 50,
                                                       height: 50,
                                                     ),
@@ -490,13 +478,6 @@ class _HomePageState extends State<HomeScreen> {
                                   widgetSelected = true;
                                 }
                               });
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute<void>(
-                              //       builder: (context) => MyTabBar()),
-                              // );
-                              // Navigator.
-                              // Navigator.pop(context);
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -507,7 +488,7 @@ class _HomePageState extends State<HomeScreen> {
                                     Image(
                                         height: h / 46,
                                         image: const AssetImage(
-                                            'assets/calendar.png')),
+                                            LocalImages.calendar)),
                                     const SizedBox(width: 10),
                                     Text('Booked Appointments',
                                         style: TextStyle(
@@ -573,13 +554,6 @@ class _HomePageState extends State<HomeScreen> {
                                   medicalSelected = false;
                                 }
                               });
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute<void>(
-                              //       builder: (context) => MyTabBar()),
-                              // );
-                              // Navigator.
-                              // Navigator.pop(context);
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -640,32 +614,13 @@ class _HomePageState extends State<HomeScreen> {
                                       maxZoomWidth: 2100,
                                       maxZoomHeight: 2100,
                                       child: Center(
-                                          // child:
-
-                                          //     WebView(
-                                          //   initialUrl: Uri.dataFromString(
-                                          //           '<html><body><iframe src="https://doctortest.medicalscan.hu/mcdreg/doc?tipus=slider" width="100%";height=1000px;></iframe></body></html>',
-                                          //           mimeType: 'text/html')
-                                          //       .toString(),
-                                          //   javascriptMode: JavascriptMode.unrestricted,
-                                          // )
                                           child: const WebView(
                                         zoomEnabled: true,
                                         initialUrl:
                                             'https://doctortest.medicalscan.hu/mcdreg/webinarlist',
                                         javascriptMode:
                                             JavascriptMode.unrestricted,
-                                      )))
-                                  //  Transform.translate(
-                                  //   offset: Offset(2, 2),
-                                  //   child: const WebView(
-                                  //     zoomEnabled: true,
-                                  //     initialUrl:
-                                  //         'https://doctortest.medicalscan.hu/mcdreg/doc?tipus=slider',
-                                  //     javascriptMode: JavascriptMode.unrestricted,
-                                  //   ),
-                                  // ),
-                                  ))
+                                      )))))
                           : SizedBox(),
                       Padding(
                         padding:
@@ -685,83 +640,14 @@ class _HomePageState extends State<HomeScreen> {
                               Navigator.pop(context);
                               await Navigator.pushNamed(
                                   context, RoutePaths.bookAppointmentScreen);
-
-                              // Alert(
-                              //   closeIcon: null,
-                              //   style: AlertStyle(),
-                              //   context: context,
-                              //   padding: EdgeInsets.all(20),
-                              //   content: Column(
-                              //     crossAxisAlignment: CrossAxisAlignment.center,
-                              //     mainAxisAlignment: MainAxisAlignment.center,
-                              //     children: <Widget>[
-                              //       Image(
-                              //         image: AssetImage("assets/cancel.png"),
-                              //         width: 50,
-                              //         height: 50,
-                              //       ),
-                              //       SizedBox(height: 20),
-                              //       Text("BOOK APPOINTMENT",
-                              //           style: TextStyle(
-                              //             fontSize: 16,
-                              //             fontWeight: FontWeight.bold,
-                              //           ),
-                              //           textAlign: TextAlign.center),
-                              //       SizedBox(height: 5),
-                              //       Text(
-                              //         "Are you sure you want to book appointment",
-                              //         textAlign: TextAlign.center,
-                              //         style: TextStyle(
-                              //           fontSize: 12,
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
-                              //   buttons: [
-                              //     DialogButton(
-                              //       margin: EdgeInsets.only(left: 20),
-                              //       color: Colors.red[500],
-                              //       radius: BorderRadius.circular(20),
-                              //       onPressed: () async {
-                              //         Navigator.pop(context);
-                              //         await Navigator.pushReplacement(
-                              //           context,
-                              //           MaterialPageRoute<void>(
-                              //               builder: (context) =>
-                              //                   BookingAppointmentScreen()),
-                              //         );
-                              //       },
-                              //       child: Text(
-                              //         "Yes",
-                              //         style: TextStyle(
-                              //             color: Colors.white, fontSize: 16),
-                              //       ),
-                              //     ),
-                              //     DialogButton(
-                              //       margin:
-                              //           EdgeInsets.only(right: 20, left: 10),
-                              //       color: Colors.grey[800],
-                              //       radius: BorderRadius.circular(20),
-                              //       onPressed: () => Navigator.pop(context),
-                              //       child: Text(
-                              //         "Cancel",
-                              //         style: TextStyle(
-                              //             color: Colors.white, fontSize: 16),
-                              //       ),
-                              //     ),
-                              //   ],
-                              // ).show();
-
-                              // Navigator.
-                              // Navigator.pop(context);
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Image(
                                     height: h / 46,
-                                    image: const AssetImage(
-                                        'assets/calendar.png')),
+                                    image:
+                                        const AssetImage(LocalImages.calendar)),
                                 const SizedBox(width: 10),
 
                                 Row(
@@ -805,7 +691,6 @@ class _HomePageState extends State<HomeScreen> {
     return Container(
       margin: EdgeInsets.only(left: 10, right: 10),
       padding: EdgeInsets.all(10),
-      // height: h / 2.2 + 15,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
@@ -813,65 +698,109 @@ class _HomePageState extends State<HomeScreen> {
       ),
       child: Column(
         children: [
-          (noData != true)
-              ? Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            controllerC.previousPage();
-                          });
-                        },
-                        child: Icon(Icons.arrow_back),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            controllerC.nextPage();
-                          });
-                        },
-                        child: Icon(Icons.arrow_forward),
-                      ),
+          StreamBuilder<DoctorDashboardState>(
+            stream: _doctorDashboardBloc.stateStream,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final state = snapshot.data;
+                print("this state $state");
 
-                      //Icon(Icons.arrow_forward),
-                    ],
-                  ),
-                )
-              : SizedBox(),
-          Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: (busy != true)
-                  ? SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: _image2Slider()))
-                  : (noData != true)
-                      ? Center(
-                          child: Padding(
+                if (state is LoadingDoctorDashboardState) {
+                  return Padding(
+                    padding: EdgeInsets.all(10),
+                    child: SizedBox(
+                      width: w,
+                      child: Center(
+                        child: SizedBox(
+                          height: 40,
+                          width: 40,
+                          child:
+                              CircularProgressIndicator(color: AppColors.green),
+                        ),
+                      ),
+                    ),
+                  );
+                } else if (state is BookedAppointmentsLoadedState) {
+                  final allList = state.combinedAppointments;
+
+                  if (allList.isEmpty) {
+                    return Container(
+                      width: w,
+                      margin: EdgeInsets.all(10),
+                      child: Center(
+                        child: Text("No data found",
+                            style: TextStyle(
+                                color: AppColors.red,
+                                fontSize: h / 68,
+                                fontWeight: FontWeight.w800)),
+                      ),
+                    );
+                  }
+
+                  return Container(
+                    margin: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: [
+                        Padding(
                           padding: EdgeInsets.all(10),
-                          child: SizedBox(
-                            height: 40,
-                            width: 40,
-                            child: CircularProgressIndicator(
-                                color: AppColors.green),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    controllerC.previousPage();
+                                  });
+                                },
+                                child: Icon(Icons.arrow_back),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    controllerC.nextPage();
+                                  });
+                                },
+                                child: Icon(Icons.arrow_forward),
+                              ),
+                            ],
                           ),
-                        ))
-                      : Center(
-                          child: Padding(
-                          padding: EdgeInsets.all(10),
-                          child: Text("No data found",
-                              style: TextStyle(
-                                  color: AppColors.red,
-                                  fontSize: h / 68,
-                                  fontWeight: FontWeight.w800)),
-                        ))
-              //),
-
-              )
+                        ),
+                        SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                child: _image2Slider(allList))),
+                      ],
+                    ),
+                  );
+                } else if (state is ErrorLoadingAppointmentsState) {
+                  return Container(
+                    width: w,
+                    margin: EdgeInsets.all(10),
+                    child: Center(
+                      child: Text(
+                          "An error occurred while loading appointments",
+                          style: TextStyle(
+                              color: AppColors.red,
+                              fontSize: h / 68,
+                              fontWeight: FontWeight.w800)),
+                    ),
+                  );
+                }
+              }
+              return Container(
+                width: w,
+                margin: EdgeInsets.all(10),
+                child: Center(
+                  child: Text("Loading...",
+                      style: TextStyle(
+                          color: AppColors.red,
+                          fontSize: h / 68,
+                          fontWeight: FontWeight.w800)),
+                ),
+              );
+            },
+          )
         ],
       ),
     );
@@ -888,8 +817,6 @@ class _HomePageState extends State<HomeScreen> {
         height: h / 2.5,
         viewportFraction: 0.9,
         aspectRatio: 2.0,
-        // aspectRatio: 16 / 9,
-        // viewportFraction: 0.8,
         initialPage: 0,
         enableInfiniteScroll: true,
         reverse: false,
@@ -899,18 +826,9 @@ class _HomePageState extends State<HomeScreen> {
         autoPlayCurve: Curves.linear,
         enlargeCenterPage: false,
         scrollDirection: Axis.horizontal,
-        //height: 300,
-        // onPageChanged: (val, _) {
-        //   setState(() {
-        //     controllerC.jumpToPage(val);
-        //   });
-        // }
       ),
-      // ignore: can_be_null_after_null_aware
       items: model1?.map((e) {
         return Container(
-          // alignment: Alignment.center,
-          // width: MediaQuery.of(context).size.width,
           child: Stack(
             children: [
               Padding(
@@ -956,10 +874,6 @@ class _HomePageState extends State<HomeScreen> {
                                   height: h / 56,
                                   image: AssetImage('assets/stethoscope.png')),
                               const SizedBox(width: 5),
-                              // Expanded(
-                              //   child:
-                              //  Row(
-                              //  children: [
                               Text(
                                 "specialty - ",
                                 style: TextStyle(
@@ -980,12 +894,7 @@ class _HomePageState extends State<HomeScreen> {
                                   fontWeight: FontWeight.w800,
                                   color: Colors.black,
                                 ),
-                                // maxLines: 4,
-                                //  softWrap: !true,
                               )),
-                              //  ],
-                              //  ),
-                              //  ),
                             ],
                           ),
                         ),
@@ -1003,28 +912,19 @@ class _HomePageState extends State<HomeScreen> {
                               color: Colors.grey,
                               size: h / 56,
                             ),
-                            // Image(
-                            //     height: h / 56,
-                            //     image: AssetImage(
-                            //         'assets/calendar.png')),
                             const SizedBox(width: 5),
                             Expanded(
-                                // padding:
-                                // EdgeInsets.only(left: 5, right: 20),
                                 child: Text(
                               formatDate(
                                   DateTime.parse(
                                       e["appointmentDate"].toString()),
                                   [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]),
-
                               style: TextStyle(
                                 fontSize: w / 46,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.black,
                               ),
-
                               maxLines: 4,
-                              // softWrap: !true,
                             )),
                           ],
                         ),
@@ -1041,10 +941,6 @@ class _HomePageState extends State<HomeScreen> {
                                 height: h / 56,
                                 image: AssetImage('assets/repeat.png')),
                             const SizedBox(width: 5),
-                            // Expanded(
-                            // padding:
-                            // EdgeInsets.only(left: 5, right: 20),
-                            // child:
                             Text(
                               "Slot- ",
                               style: TextStyle(
@@ -1052,15 +948,8 @@ class _HomePageState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w800,
                                 color: Colors.black,
                               ),
-
                               maxLines: 4,
-                              // softWrap: !true,
                             ),
-                            //),
-                            //  Expanded(
-                            // padding:
-                            // EdgeInsets.only(left: 5, right: 20),
-                            //      child:
                             Text(
                               formatDate(
                                   DateTime.parse(e["fromTime"].toString()),
@@ -1070,18 +959,11 @@ class _HomePageState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w800,
                                 color: Colors.black,
                               ),
-
                               maxLines: 4,
-                              // softWrap: !true,
                             ),
-                            //      ),
                             SizedBox(
                               width: 5,
                             ),
-                            // Expanded(
-                            // padding:
-                            // EdgeInsets.only(left: 5, right: 20),
-                            // child:
                             Text(
                               formatDate(DateTime.parse(e["toTime"].toString()),
                                   ['-', HH, ':', nn]),
@@ -1090,15 +972,11 @@ class _HomePageState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w800,
                                 color: Colors.black,
                               ),
-
                               maxLines: 4,
-                              // softWrap: !true,
                             )
-                            //   ),
                           ],
                         ),
                       ),
-
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 20,
@@ -1112,8 +990,6 @@ class _HomePageState extends State<HomeScreen> {
                                 image: AssetImage('assets/repeat.png')),
                             const SizedBox(width: 5),
                             Expanded(
-                                // padding:
-                                // EdgeInsets.only(left: 5, right: 20),
                                 child: Row(
                               children: [
                                 Text(
@@ -1123,20 +999,16 @@ class _HomePageState extends State<HomeScreen> {
                                     fontWeight: FontWeight.w800,
                                     color: Colors.black,
                                   ),
-
                                   maxLines: 4,
-                                  // softWrap: !true,
                                 ),
                                 Text(
-                                  e["duration"].toString() ?? "" + ' minutes',
+                                  e["duration"].toString() ?? "" ' minutes',
                                   style: TextStyle(
                                     fontSize: w / 46,
                                     fontWeight: FontWeight.w800,
                                     color: Colors.black,
                                   ),
-
                                   maxLines: 4,
-                                  // softWrap: !true,
                                 )
                               ],
                             )),
@@ -1156,8 +1028,6 @@ class _HomePageState extends State<HomeScreen> {
                                 image: AssetImage('assets/category-(2).png')),
                             const SizedBox(width: 5),
                             Expanded(
-                                // padding:
-                                // EdgeInsets.only(left: 5, right: 20),
                                 child: Container(
                               width: w / 2.4,
                               child: Row(
@@ -1169,9 +1039,7 @@ class _HomePageState extends State<HomeScreen> {
                                       fontWeight: FontWeight.w800,
                                       color: Colors.black,
                                     ),
-
                                     maxLines: 4,
-                                    // softWrap: !true,
                                   ),
                                   Text(
                                     e["appointmentType"] ?? "",
@@ -1207,14 +1075,6 @@ class _HomePageState extends State<HomeScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  // final storage =
-                                  //     FlutterSecureStorage(); //token
-
-                                  // var infoid = e['infoid'];
-
-                                  // storage.write(
-                                  //     key: 'infoid', value: infoid.toString());
-
                                   Navigator.pushNamed(context,
                                       RoutePaths.appointmentDetailScreen,
                                       arguments: {
@@ -1230,8 +1090,8 @@ class _HomePageState extends State<HomeScreen> {
                                     shape: RoundedRectangleBorder(
                                         borderRadius:
                                             BorderRadius.circular(10)),
-                                    backgroundColor: Color.fromARGB(216, 2, 7,
-                                        29), //Color.fromARGB(255, 0, 100, 181),
+                                    backgroundColor:
+                                        Color.fromARGB(216, 2, 7, 29),
                                     textStyle: TextStyle(
                                         fontSize: 2,
                                         fontWeight: FontWeight.bold)),
@@ -1292,7 +1152,6 @@ class _HomePageState extends State<HomeScreen> {
                                                           10)),
                                               backgroundColor:
                                                   Colors.transparent,
-                                              //padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
                                               textStyle: TextStyle(
                                                   fontSize: 20,
                                                   fontWeight: FontWeight.bold)),
@@ -1304,10 +1163,6 @@ class _HomePageState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-
-                      // Expanded(
-                      //   child:
-
                       Padding(
                         padding: EdgeInsets.only(right: 10, left: 10),
                         child: Row(
@@ -1325,72 +1180,8 @@ class _HomePageState extends State<HomeScreen> {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Alert(
-                                    closeIcon: null,
-                                    style: AlertStyle(),
-                                    context: context,
-                                    padding: EdgeInsets.all(20),
-                                    content: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: <Widget>[
-                                        Image(
-                                          image:
-                                              AssetImage("assets/cancel.png"),
-                                          width: 50,
-                                          height: 50,
-                                        ),
-                                        SizedBox(height: 20),
-                                        Text("CANCEL APPOINTMENT",
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.center),
-                                        SizedBox(height: 5),
-                                        Text(
-                                          "Are you sure you want to cancel the appointment",
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    buttons: [
-                                      DialogButton(
-                                        margin: EdgeInsets.only(left: 20),
-                                        color: Colors.red[500],
-                                        radius: BorderRadius.circular(20),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          cancelAppointment(
-                                              e["appointmentId"] ?? "");
-                                        },
-                                        child: Text(
-                                          "Yes",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                      DialogButton(
-                                        margin: EdgeInsets.only(
-                                            right: 20, left: 10),
-                                        color: Colors.grey[800],
-                                        radius: BorderRadius.circular(20),
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text(
-                                          "Cancel",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16),
-                                        ),
-                                      ),
-                                    ],
-                                  ).show();
+                                  cancelAppointmentAlert(
+                                      e["appointmentId"] ?? "", context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
@@ -1406,7 +1197,6 @@ class _HomePageState extends State<HomeScreen> {
                           ],
                         ),
                       ),
-
                       SizedBox(
                         height: 6,
                       )
@@ -1433,15 +1223,8 @@ class _HomePageState extends State<HomeScreen> {
                               child: const Image(
                                   image: AssetImage('assets/bookmark.png'))),
                         ),
-                        //   ),
-                        //),
-                        // ClipOval(
-                        //   child: Material(
-                        //     color: Colors
-                        //         .white, // Button color
-                        //     child:
                         InkWell(
-                          splashColor: Colors.black, // Splash color
+                          splashColor: Colors.black,
                           onTap: () {
                             Navigator.pushNamed(
                                 context, RoutePaths.bookAppointmentScreen);
@@ -1454,1121 +1237,311 @@ class _HomePageState extends State<HomeScreen> {
                                   image: AssetImage(
                                       'assets/green-join-call.png'))),
                         ),
-                        // ),
-                        // ),
                       ],
                     )),
               ),
             ],
           ),
         );
-      }).toList(),
+      })?.toList(),
     );
   }
 
-  Widget _image2Slider() {
+  Widget _image2Slider(List<dynamic> combinedAppointments) {
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
 
-    allList = (model2 == null)
-        ? []
-        // ignore: can_be_null_after_null_aware
-        : model2?.map((e) {
-            return Container(
-              // alignment: Alignment.center,
-              // width: MediaQuery.of(context).size.width,
-              child: Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        color: Color.fromARGB(239, 239, 247, 248),
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      height: h / 2.6,
-                      width: w / 2.4,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 10),
-                            child: CircleAvatar(
-                              radius: h / 20,
-                              backgroundColor: Colors.white, // Image radius
-                              backgroundImage: (e["photoUrl"] == null)
-                                  ? AssetImage(LocalImages.doctorPic)
-                                  : NetworkImage(
-                                          Api.imageBaseUrl + e["photoUrl"])
-                                      as ImageProvider,
-                            ),
-                          ),
-                          Text(
-                            e["firstName"],
-                            style: TextStyle(
-                                fontSize: h / 68, fontWeight: FontWeight.w800),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              top: 10,
-                            ),
-                            child: Container(
-                              //  color: Colors.amber,
-                              width: w / 2.4,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Image(
-                                      height: h / 56,
-                                      image:
-                                          AssetImage('assets/stethoscope.png')),
-                                  const SizedBox(width: 5),
-                                  // Expanded(
-                                  //   child:
-                                  //  Row(
-                                  //  children: [
-                                  Text(
-                                    "specialty - ",
-                                    style: TextStyle(
-                                      fontSize: w / 46,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.black,
-                                    ),
-                                    maxLines: 4,
-                                    softWrap: !true,
-                                  ),
-                                  Expanded(
-                                      child: Text(
-                                    e["expert"]
-                                        .map((e) => e["specialization"])
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontSize: w / 46,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.black,
-                                    ),
-                                    // maxLines: 4,
-                                    //  softWrap: !true,
-                                  )),
-                                  //  ],
-                                  //  ),
-                                  //  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              top: 10,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.calendar_month_outlined,
-                                  color: Colors.grey,
-                                  size: h / 56,
-                                ),
-                                // Image(
-                                //     height: h / 56,
-                                //     image: AssetImage(
-                                //         'assets/calendar.png')),
-                                const SizedBox(width: 5),
-                                Expanded(
-                                    // padding:
-                                    // EdgeInsets.only(left: 5, right: 20),
-                                    child: Text(
-                                  formatDate(
-                                      DateTime.parse(
-                                          e["appointmentDate"].toString()),
-                                      [
-                                        dd,
-                                        '/',
-                                        mm,
-                                        '/',
-                                        yyyy,
-                                        ' ',
-                                        HH,
-                                        ':',
-                                        nn
-                                      ]),
-
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-
-                                  maxLines: 4,
-                                  // softWrap: !true,
-                                )),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              top: 10,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image(
-                                    height: h / 56,
-                                    image: AssetImage('assets/repeat.png')),
-                                const SizedBox(width: 5),
-                                // Expanded(
-                                // padding:
-                                // EdgeInsets.only(left: 5, right: 20),
-                                // child:
-                                Text(
-                                  "Slot- ",
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-
-                                  maxLines: 4,
-                                  // softWrap: !true,
-                                ),
-                                //),
-                                //  Expanded(
-                                // padding:
-                                // EdgeInsets.only(left: 5, right: 20),
-                                //      child:
-                                Text(
-                                  formatDate(
-                                      DateTime.parse(
-                                          e["fromTime"].toString() ?? ""),
-                                      [HH, ':', nn]),
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-
-                                  maxLines: 4,
-                                  // softWrap: !true,
-                                ),
-                                //      ),
-                                SizedBox(
-                                  width: 5,
-                                ),
-                                // Expanded(
-                                // padding:
-                                // EdgeInsets.only(left: 5, right: 20),
-                                // child:
-                                Text(
-                                  formatDate(
-                                      DateTime.parse(
-                                          e["toTime"].toString() ?? ""),
-                                      ['-', HH, ':', nn]),
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-
-                                  maxLines: 4,
-                                  // softWrap: !true,
-                                )
-                                //   ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              top: 10,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image(
-                                    height: h / 56,
-                                    image: AssetImage('assets/repeat.png')),
-                                const SizedBox(width: 5),
-                                Expanded(
-                                    // padding:
-                                    // EdgeInsets.only(left: 5, right: 20),
-                                    child: Row(
-                                  children: [
-                                    Text(
-                                      "Duration- ",
-                                      style: TextStyle(
-                                        fontSize: w / 46,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.black,
-                                      ),
-
-                                      maxLines: 4,
-                                      // softWrap: !true,
-                                    ),
-                                    Text(
-                                      e["duration"].toString() ??
-                                          "" + ' minutes',
-                                      style: TextStyle(
-                                        fontSize: w / 46,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.black,
-                                      ),
-
-                                      maxLines: 4,
-                                      // softWrap: !true,
-                                    )
-                                  ],
-                                )),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                              top: 10,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image(
-                                    height: h / 66,
-                                    image:
-                                        AssetImage('assets/category-(2).png')),
-                                const SizedBox(width: 5),
-                                Expanded(
-                                    // padding:
-                                    // EdgeInsets.only(left: 5, right: 20),
-                                    child: Container(
-                                  width: w / 2.4,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        "Type- ",
-                                        style: TextStyle(
-                                          fontSize: w / 46,
-                                          fontWeight: FontWeight.w800,
-                                          color: Colors.black,
-                                        ),
-
-                                        maxLines: 4,
-                                        // softWrap: !true,
-                                      ),
-                                      Text(
-                                        e["appointmentType"] ?? "",
-                                        style: TextStyle(
-                                          fontSize: w / 46,
-                                          fontWeight: FontWeight.w800,
-                                          color: Colors.black,
-                                        ),
-                                        softWrap: true,
-                                        overflow: TextOverflow.ellipsis,
-                                        maxLines: 4,
-                                      )
-                                    ],
-                                  ),
-                                )),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: Container(
-                                  height: h / 30,
-                                  child: ElevatedButton(
-                                    child: Text(
-                                      "BOOK APPOINTMENT",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        letterSpacing: .5,
-                                        fontSize: h / 180,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Alert(
-                                        closeIcon: null,
-                                        style: AlertStyle(),
-                                        context: context,
-                                        padding: EdgeInsets.all(20),
-                                        content: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: const <Widget>[
-                                            Image(
-                                              image: AssetImage(
-                                                  LocalImages.cancel),
-                                              width: 50,
-                                              height: 50,
-                                            ),
-                                            SizedBox(height: 20),
-                                            Text("BOOK APPOINTMENT",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                textAlign: TextAlign.center),
-                                            SizedBox(height: 5),
-                                            Text(
-                                              "Are you sure you want to book this appointment",
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        buttons: [
-                                          DialogButton(
-                                            margin: EdgeInsets.only(left: 20),
-                                            color: Colors.red[500],
-                                            radius: BorderRadius.circular(20),
-                                            onPressed: () async {
-                                              Navigator.pop(context);
-                                              Alert(
-                                                onWillPopActive: false,
-                                                closeIcon: null,
-                                                style: AlertStyle(),
-                                                context: context,
-                                                padding: EdgeInsets.all(20),
-                                                content: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    // Image(
-                                                    //   image: AssetImage(
-                                                    //       LocalImages
-                                                    //           .alert),
-                                                    //   width: 50,
-                                                    //   height: 50,
-                                                    // ),
-                                                    SizedBox(height: 20),
-                                                    Text(
-                                                        "Enter appointment purpose",
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                    SizedBox(height: 5),
-                                                    //  Expanded(
-                                                    // flex: 1,
-                                                    //  child:
-
-                                                    TextFormField(
-                                                        controller:
-                                                            appointmentPurpose,
-                                                        // obscureText: isMail,
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: w / 30,
-                                                        ),
-                                                        decoration:
-                                                            InputDecoration(
-                                                                // hintText: (doctorProfile != null) ? doctorProfile['doctorConslutationCount'].toString() : 0.toString(),
-                                                                hintStyle:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize:
-                                                                      w / 30,
-                                                                ),
-                                                                border:
-                                                                    OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              15),
-                                                                  borderSide:
-                                                                      BorderSide
-                                                                          .none,
-                                                                ),
-                                                                fillColor: Color
-                                                                    .fromARGB(
-                                                                        239,
-                                                                        239,
-                                                                        247,
-                                                                        248),
-                                                                filled: true)),
-                                                    // ),
-                                                  ],
-                                                ),
-                                                buttons: [
-                                                  DialogButton(
-                                                    margin:
-                                                        const EdgeInsets.only(
-                                                            left: 20),
-                                                    color: Colors.red[500],
-                                                    radius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    onPressed: () async {
-                                                      Navigator.pop(context);
-                                                      final storage =
-                                                          FlutterSecureStorage();
-                                                      var id = await storage
-                                                          .read(key: 'id');
-                                                      FormData formData =
-                                                          FormData.fromMap({
-                                                        'file': "",
-                                                        'AppointmentTitle':
-                                                            appointmentPurpose
-                                                                .text,
-                                                        'DoctorConsultationId':
-                                                            e['doctorId'],
-                                                        'DoctorId':
-                                                            id.toString(),
-                                                        'SlotId': e['slotId'],
-                                                        'Duration':
-                                                            e['duration'],
-                                                        'StartDate':
-                                                            e['toTime'],
-                                                        'Name': ""
-                                                      });
-
-                                                      BookDoctorNewAppointment(
-                                                          formData);
-                                                    },
-                                                    child: const Text(
-                                                      "Done",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 16),
-                                                    ),
-                                                  ),
-                                                  DialogButton(
-                                                    margin: EdgeInsets.only(
-                                                        right: 20, left: 10),
-                                                    color: Colors.grey[800],
-                                                    radius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    child: const Text(
-                                                      "Cancel",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 16),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ).show();
-                                            },
-                                            child: const Text(
-                                              "Yes",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16),
-                                            ),
-                                          ),
-                                          DialogButton(
-                                            margin: EdgeInsets.only(
-                                                right: 20, left: 10),
-                                            color: Colors.grey[800],
-                                            radius: BorderRadius.circular(20),
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: Text(
-                                              "Cancel",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 16),
-                                            ),
-                                          ),
-                                        ],
-                                      ).show();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        backgroundColor: AppColors
-                                            .green, //Color.fromARGB(255, 0, 100, 181),
-                                        textStyle: TextStyle(
-                                            fontSize: 2,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                )),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }).toList();
-
-    model1.forEach((e) {
-      setState(() {
-        iddd = e["id"] ?? "";
-        appntmntId = e["appointmentId"] ?? "";
-        useridd = e["userId"] ?? "";
-      });
-
-      allList?.add(Container(
-        // width: MediaQuery.of(context).size.width,
-        child: Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Color.fromARGB(239, 239, 247, 248),
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-                height: h / 2.6,
-                // width: w / 2.4,
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: CircleAvatar(
-                        radius: h / 20,
-                        backgroundColor: Colors.white, // Image radius
-                        backgroundImage: (e["photoUrl"] == null)
-                            ? AssetImage(LocalImages.doctorPic)
-                            : NetworkImage(
-                                    Api.imageBaseUrl + e["photoUrl"] ?? "")
-                                as ImageProvider,
-                      ),
-                    ),
-                    Text(
-                      e["firstName"] ?? "",
-                      style: TextStyle(
-                          fontSize: h / 68, fontWeight: FontWeight.w800),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        top: 10,
-                      ),
-                      child: Container(
-                        //  color: Colors.amber,
-                        // width: w / 2.4,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image(
-                                height: h / 56,
-                                image: AssetImage('assets/stethoscope.png')),
-                            const SizedBox(width: 5),
-                            // Expanded(
-                            //   child:
-                            //  Row(
-                            //  children: [
-                            Text(
-                              "specialty - ",
-                              style: TextStyle(
-                                fontSize: w / 46,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                              maxLines: 4,
-                              softWrap: !true,
-                            ),
-                            Expanded(
-                                child: Text(
-                              e["expert"]
-                                  .map((e) => e["specialization"])
-                                  .toString(),
-                              style: TextStyle(
-                                fontSize: w / 46,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                              // maxLines: 4,
-                              //  softWrap: !true,
-                            )),
-                            //  ],
-                            //  ),
-                            //  ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        top: 10,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            color: Colors.grey,
-                            size: h / 56,
-                          ),
-                          // Image(
-                          //     height: h / 56,
-                          //     image: AssetImage(
-                          //         'assets/calendar.png')),
-                          const SizedBox(width: 5),
-                          Expanded(
-                              // padding:
-                              // EdgeInsets.only(left: 5, right: 20),
-                              child: Text(
-                            formatDate(
-                                DateTime.parse(
-                                    e["appointmentDate"].toString() ?? ""),
-                                [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]),
-
-                            style: TextStyle(
-                              fontSize: w / 46,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
-
-                            maxLines: 4,
-                            // softWrap: !true,
-                          )),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        top: 10,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image(
-                              height: h / 56,
-                              image: AssetImage('assets/repeat.png')),
-                          const SizedBox(width: 5),
-                          // Expanded(
-                          // padding:
-                          // EdgeInsets.only(left: 5, right: 20),
-                          // child:
-                          Text(
-                            "Slot- ",
-                            style: TextStyle(
-                              fontSize: w / 46,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
-
-                            maxLines: 4,
-                            // softWrap: !true,
-                          ),
-                          //),
-                          //  Expanded(
-                          // padding:
-                          // EdgeInsets.only(left: 5, right: 20),
-                          //      child:
-                          Text(
-                            formatDate(
-                                DateTime.parse(e["fromTime"].toString() ?? ""),
-                                [HH, ':', nn]),
-                            style: TextStyle(
-                              fontSize: w / 46,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
-
-                            maxLines: 4,
-                            // softWrap: !true,
-                          ),
-                          //      ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          // Expanded(
-                          // padding:
-                          // EdgeInsets.only(left: 5, right: 20),
-                          // child:
-                          Text(
-                            formatDate(
-                                DateTime.parse(e["toTime"].toString() ?? ""),
-                                ['-', HH, ':', nn]),
-                            style: TextStyle(
-                              fontSize: w / 46,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
-
-                            maxLines: 4,
-                            // softWrap: !true,
-                          )
-                          //   ),
-                        ],
-                      ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        top: 10,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image(
-                              height: h / 56,
-                              image: AssetImage('assets/repeat.png')),
-                          const SizedBox(width: 5),
-                          Expanded(
-                              // padding:
-                              // EdgeInsets.only(left: 5, right: 20),
-                              child: Row(
-                            children: [
-                              Text(
-                                "Duration- ",
-                                style: TextStyle(
-                                  fontSize: w / 46,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.black,
-                                ),
-
-                                maxLines: 4,
-                                // softWrap: !true,
-                              ),
-                              Text(
-                                e["duration"].toString() ?? "" ' minutes',
-                                style: TextStyle(
-                                  fontSize: w / 46,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.black,
-                                ),
-
-                                maxLines: 4,
-                                // softWrap: !true,
-                              )
-                            ],
-                          )),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 20,
-                        top: 10,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image(
-                              height: h / 66,
-                              image: AssetImage('assets/category-(2).png')),
-                          const SizedBox(width: 5),
-                          Expanded(
-                              // padding:
-                              // EdgeInsets.only(left: 5, right: 20),
-                              child: Container(
-                            width: w / 2.4,
-                            child: Row(
-                              children: [
-                                Text(
-                                  "Type- ",
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-
-                                  maxLines: 4,
-                                  // softWrap: !true,
-                                ),
-                                Text(
-                                  e["appointmentType"] ?? "",
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-                                  softWrap: true,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 4,
-                                )
-                              ],
-                            ),
-                          )),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: Container(
-                            height: h / 30,
-                            child: ElevatedButton(
-                              child: Text(
-                                "MORE INFORMATION",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  letterSpacing: .5,
-                                  fontSize: h / 180,
-                                ),
-                              ),
-                              onPressed: () {
-                                Navigator.pushNamed(
-                                    context, RoutePaths.appointmentDetailScreen,
-                                    arguments: {
-                                      'key1':
-                                          e["appointmentId"].toString() ?? "",
-                                      'key2': e["id"].toString() ?? "",
-                                      'key3':
-                                          e["appointmentCode"].toString() ?? "",
-                                    });
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  backgroundColor: Color.fromARGB(216, 2, 7,
-                                      29), //Color.fromARGB(255, 0, 100, 181),
-                                  textStyle: TextStyle(
-                                      fontSize: 2,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                          )),
-                          SizedBox(width: 5),
-                          Expanded(
-                              child: (uploadBusy == false)
-                                  ? Container(
-                                      height: h / 30,
-                                      child: ElevatedButton(
-                                        child: Text(
-                                          'UPLOAD DOCUMENT',
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            letterSpacing: .5,
-                                            fontSize: h / 180,
-                                          ),
-                                        ),
-                                        onPressed: () async {
-                                          FilePickerResult result =
-                                              await FilePicker.platform
-                                                  .pickFiles(
-                                            type: FileType.custom,
-                                            allowMultiple: false,
-                                            allowedExtensions: [
-                                              'jpg',
-                                              'pdf',
-                                              'doc',
-                                              'ppt',
-                                              'JPEG',
-                                              'png'
-                                            ],
-                                          );
-                                          if (result != null) {
-                                            PlatformFile file =
-                                                result.files.first;
-                                            var multipartFile =
-                                                await MultipartFile.fromFile(
-                                              file.path,
-                                            );
-                                            FormData formData =
-                                                FormData.fromMap({
-                                              'file': multipartFile,
-                                              'MeetingId':
-                                                  e["appointmentCode"] ?? "",
-                                              'Usertype': '2',
-                                              'Id': e["id"].toString() ?? "",
-                                            });
-                                            print(e["id"] ?? "Id");
-                                            UploadShareDocument(formData);
-                                          } else {}
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            backgroundColor: Colors.transparent,
-                                            //padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                                            textStyle: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold)),
-                                      ),
-                                    )
-                                  : CircularProgressIndicator(
-                                      color: AppColors.green,
-                                    ))
-                        ],
-                      ),
-                    ),
-
-                    // Expanded(
-                    //   child:
-
-                    Padding(
-                      padding: EdgeInsets.only(right: 10, left: 10),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: Container(
-                            height: h / 30,
-                            child: ElevatedButton(
-                              child: Text(
-                                "CANCEL APPOINTMENT",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  // letterSpacing: .4,
-                                  fontSize: h / 180,
-                                ),
-                              ),
-                              onPressed: () {
-                                Alert(
-                                  closeIcon: null,
-                                  style: AlertStyle(),
-                                  context: context,
-                                  padding: EdgeInsets.all(20),
-                                  content: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Image(
-                                        image: AssetImage("assets/cancel.png"),
-                                        width: 50,
-                                        height: 50,
-                                      ),
-                                      SizedBox(height: 20),
-                                      Text("CANCEL APPOINTMENT",
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          textAlign: TextAlign.center),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        "Are you sure you want to cancel the appointment",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  buttons: [
-                                    DialogButton(
-                                      margin: EdgeInsets.only(left: 20),
-                                      color: Colors.red[500],
-                                      radius: BorderRadius.circular(20),
-                                      onPressed: () => {
-                                        Navigator.pop(context),
-                                        cancelAppointment(
-                                            e["appointmentId"] ?? "")
-                                      },
-                                      child: Text(
-                                        "Yes",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 16),
-                                      ),
-                                    ),
-                                    DialogButton(
-                                      margin:
-                                          EdgeInsets.only(right: 20, left: 10),
-                                      color: Colors.grey[800],
-                                      radius: BorderRadius.circular(20),
-                                      onPressed: () => Navigator.pop(context),
-                                      child: Text(
-                                        "Cancel",
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 16),
-                                      ),
-                                    ),
-                                  ],
-                                ).show();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  backgroundColor: Colors.red[
-                                      600], //Color.fromARGB(255, 0, 100, 181),
-                                  textStyle: TextStyle(
-                                      fontSize: 2,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                          )),
-                          SizedBox(width: 5),
-                          (joinCallhideShow == true)
-                              ? Expanded(
-                                  child: Container(
-                                  height: h / 30,
-                                  child: ElevatedButton(
-                                    child: Text(
-                                      'JOIN CALL',
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: .5,
-                                        fontSize: h / 180,
-                                      ),
-                                    ),
-                                    onPressed: () async {
-                                      meetingEndStatus(
-                                          e["id"] ?? 0,
-                                          e["appointmentId"] ?? 0,
-                                          e["userId"] ?? 0);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        backgroundColor: const Color.fromARGB(
-                                            159, 114, 190, 21),
-                                        //padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                                        textStyle: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                ))
-                              : SizedBox()
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: 6,
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ));
-    });
     return CarouselSlider(
         carouselController: controllerC,
         options: CarouselOptions(
           height: h / 2.5,
           viewportFraction: 0.4,
           aspectRatio: 2.0,
-          // aspectRatio: 16 / 9,
-          // viewportFraction: 0.8,
           initialPage: 0,
-          enableInfiniteScroll: false, //(allList.length > 2) ? true : false,
+          enableInfiniteScroll: false,
           reverse: false,
-          autoPlay: (allList.length > 2) ? true : false,
+          autoPlay: (combinedAppointments.length > 2) ? true : false,
           autoPlayInterval: const Duration(seconds: 5),
           autoPlayAnimationDuration: const Duration(milliseconds: 3000),
           autoPlayCurve: Curves.linear,
           disableCenter: true,
           enlargeCenterPage: false,
           scrollDirection: Axis.horizontal,
-          //height: 300,
-          // onPageChanged: (val, _) {
-          //   setState(() {
-          //     controllerC.jumpToPage(val);
-          //   });
-          // }
         ),
-        items: allList ?? []);
+        items: combinedAppointments.map((e) {
+          return SizedBox(
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Color.fromARGB(239, 239, 247, 248),
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                    ),
+                    height: h / 2.6,
+                    // width: w / 2.4,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: CircleAvatar(
+                            radius: h / 20,
+                            backgroundColor: Colors.white,
+                            backgroundImage: (e["photoUrl"] == null)
+                                ? AssetImage(LocalImages.doctorPic)
+                                : NetworkImage(Api.imageBaseUrl + e["photoUrl"])
+                                    as ImageProvider,
+                          ),
+                        ),
+                        Text(
+                          e["firstName"] ?? "",
+                          style: TextStyle(
+                              fontSize: h / 68, fontWeight: FontWeight.w800),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            top: 10,
+                          ),
+                          child: Container(
+                            width: w / 2.4,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image(
+                                    height: h / 56,
+                                    image:
+                                        AssetImage('assets/stethoscope.png')),
+                                const SizedBox(width: 5),
+                                Text(
+                                  "specialty - ",
+                                  style: TextStyle(
+                                    fontSize: w / 46,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.black,
+                                  ),
+                                  maxLines: 4,
+                                  softWrap: !true,
+                                ),
+                                Expanded(
+                                    child: Text(
+                                  e["expert"]
+                                      .map((e) => e["specialization"])
+                                      .toString(),
+                                  style: TextStyle(
+                                    fontSize: w / 46,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.black,
+                                  ),
+                                )),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            top: 10,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.calendar_month_outlined,
+                                color: Colors.grey,
+                                size: h / 56,
+                              ),
+                              const SizedBox(width: 5),
+                              Expanded(
+                                  child: Text(
+                                formatDate(
+                                    DateTime.parse(
+                                        e["appointmentDate"].toString()),
+                                    [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]),
+                                style: TextStyle(
+                                  fontSize: w / 46,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
+                                maxLines: 4,
+                              )),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            top: 10,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image(
+                                  height: h / 56,
+                                  image: AssetImage('assets/repeat.png')),
+                              const SizedBox(width: 5),
+                              Text(
+                                "Slot- ",
+                                style: TextStyle(
+                                  fontSize: w / 46,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
+                                maxLines: 4,
+                              ),
+                              Text(
+                                formatDate(
+                                    DateTime.parse(
+                                        e["fromTime"].toString() ?? ""),
+                                    [HH, ':', nn]),
+                                style: TextStyle(
+                                  fontSize: w / 46,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
+                                maxLines: 4,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                formatDate(
+                                    DateTime.parse(
+                                        e["toTime"].toString() ?? ""),
+                                    ['-', HH, ':', nn]),
+                                style: TextStyle(
+                                  fontSize: w / 46,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.black,
+                                ),
+                                maxLines: 4,
+                              )
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            top: 10,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image(
+                                  height: h / 56,
+                                  image: AssetImage('assets/repeat.png')),
+                              const SizedBox(width: 5),
+                              Expanded(
+                                  child: Row(
+                                children: [
+                                  Text(
+                                    "Duration- ",
+                                    style: TextStyle(
+                                      fontSize: w / 46,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.black,
+                                    ),
+                                    maxLines: 4,
+                                  ),
+                                  Text(
+                                    e["duration"].toString() ?? "" ' minutes',
+                                    style: TextStyle(
+                                      fontSize: w / 46,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.black,
+                                    ),
+                                    maxLines: 4,
+                                  )
+                                ],
+                              )),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            top: 10,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Image(
+                                  height: h / 66,
+                                  image: AssetImage('assets/category-(2).png')),
+                              const SizedBox(width: 5),
+                              Expanded(
+                                  child: Container(
+                                width: w / 2.4,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      "Type- ",
+                                      style: TextStyle(
+                                        fontSize: w / 46,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.black,
+                                      ),
+                                      maxLines: 4,
+                                    ),
+                                    Text(
+                                      e["appointmentType"] ?? "",
+                                      style: TextStyle(
+                                        fontSize: w / 46,
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.black,
+                                      ),
+                                      softWrap: true,
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 4,
+                                    )
+                                  ],
+                                ),
+                              )),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                  child: Container(
+                                height: h / 30,
+                                child: ElevatedButton(
+                                  child: Text(
+                                    "BOOK APPOINTMENT",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      letterSpacing: .5,
+                                      fontSize: h / 180,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    showAppointmentConfirmation(context, e);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10)),
+                                      backgroundColor: AppColors
+                                          .green, //Color.fromARGB(255, 0, 100, 181),
+                                      textStyle: TextStyle(
+                                          fontSize: 2,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              )),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        })?.toList());
   }
 
   showAlert(context_, title, msg, subMsg, Image icon) {
@@ -2918,139 +1891,91 @@ class _HomePageState extends State<HomeScreen> {
   //GetBookedAppointmentModel model1;
   //GetRecommendedAppointmentModel model2;
 
-  getBookedAppointment() async {
-    busy = true;
-    var base = Api.baseUrl;
-    final storage = FlutterSecureStorage();
-    var auth = await storage.read(key: 'id');
-    var token = await storage.read(key: 'token');
-    var photo = await storage.read(key: 'profilePhoto');
-    doctorType = await storage.read(key: 'dtype');
-    if (photo == "null") {
-      profileimage =
-          "https://staging.myclickdoctor.com/assets/img/doctor-user.png";
-    } else {
-      profileimage = Api.imageBaseUrl2 + photo;
-    }
-    print(profileimage);
+  // getBookedAppointment() async {
+  //   busy = true;
+  //   var base = Api.baseUrl;
+  //   final storage = FlutterSecureStorage();
+  //   var auth = await storage.read(key: 'id');
+  //   var token = await storage.read(key: 'token');
+  //   var photo = await storage.read(key: 'profilePhoto');
+  //   doctorType = await storage.read(key: 'dtype');
+  //   if (photo == "null") {
+  //     profileimage =
+  //         "https://staging.myclickdoctor.com/assets/img/doctor-user.png";
+  //   } else {
+  //     profileimage = Api.imageBaseUrl2 + photo;
+  //   }
+  //   print(profileimage);
 
-    var response = await client.get(
-      Uri.parse('$base/Doctor/GetDashBoardBookedAppointment?DocId=$auth'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'authorization': '$token',
-        'Lang': 'en',
-        'Status': '1'
-      },
-    );
-    if (response.statusCode == 200) {
-      var Body = json.decode(response.body);
+  //   var response = await client.get(
+  //     Uri.parse('$base/Doctor/GetDashBoardBookedAppointment?DocId=$auth'),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //       'authorization': '$token',
+  //       'Lang': 'en',
+  //       'Status': '1'
+  //     },
+  //   );
+  //   if (response.statusCode == 200) {
+  //     var Body = json.decode(response.body);
 
-      if (Body.isEmpty) {
-        // setState(() {
-        busy = true;
-        noData = true;
+  //     if (Body.isEmpty) {
+  //       // setState(() {
+  //       busy = true;
+  //       noData = true;
 
-        //   });
-      } else {
-        // setState(() {
-        busy = false;
-        noData = false;
-        // });
-        //  doctorType = doctorT;
-        model1 = Body['specializationCategory'];
-      }
+  //       //   });
+  //     } else {
+  //       // setState(() {
+  //       busy = false;
+  //       noData = false;
+  //       // });
+  //       //  doctorType = doctorT;
+  //       model1 = Body['specializationCategory'];
+  //     }
 
-      setState(() {
-        profileimage;
-      });
-    } else {}
-  }
+  //     setState(() {
+  //       profileimage;
+  //     });
+  //   } else {}
+  // }
 
-  getRecommendAppointment() async {
-    busy = true;
-    var base = Api.baseUrl;
-    final storage = FlutterSecureStorage();
-    var auth = await storage.read(key: 'id');
-    var token = await storage.read(key: 'token');
-    var response = await client.get(
-      Uri.parse('$base/Doctor/GetDoctorRecomndedTimeslot?DocId=$auth'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'authorization': '$token',
-        'Lang': 'en',
-        'Status': '1'
-      },
-    );
-    if (response.statusCode == 200) {
-      var Body = json.decode(response.body);
+  // getRecommendAppointment() async {
+  //   busy = true;
+  //   var base = Api.baseUrl;
+  //   final storage = FlutterSecureStorage();
+  //   var auth = await storage.read(key: 'id');
+  //   var token = await storage.read(key: 'token');
+  //   var response = await client.get(
+  //     Uri.parse('$base/Doctor/GetDoctorRecomndedTimeslot?DocId=$auth'),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //       'authorization': '$token',
+  //       'Lang': 'en',
+  //       'Status': '1'
+  //     },
+  //   );
+  //   if (response.statusCode == 200) {
+  //     var Body = json.decode(response.body);
 
-      if (Body.isEmpty) {
-        //  setState(() {
-        busy = true;
-        noData = true;
-        //  });
-      } else {
-        model2 = Body['specializationCategory'];
-        //   setState(() {
-        noData = false;
-        busy = false;
-        //    });
-      }
+  //     if (Body.isEmpty) {
+  //       //  setState(() {
+  //       busy = true;
+  //       noData = true;
+  //       //  });
+  //     } else {
+  //       model2 = Body['specializationCategory'];
+  //       //   setState(() {
+  //       noData = false;
+  //       busy = false;
+  //       //    });
+  //     }
 
-      setState(() {});
-    } else {
-      Alert(
-        closeIcon: null,
-        style: const AlertStyle(),
-        context: context,
-        padding: const EdgeInsets.all(20),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Image(
-              image: AssetImage(LocalImages.alert),
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(height: 20),
-            Text("Alert",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center),
-            SizedBox(height: 5),
-            Text(
-              "Something went wrong",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-        buttons: [
-          DialogButton(
-            margin: const EdgeInsets.only(left: 20),
-            color: const Color.fromARGB(159, 114, 190, 21),
-            radius: BorderRadius.circular(20),
-            onPressed: () async {
-              Navigator.pop(context);
-
-              // await Navigator.pushReplacementNamed(
-              //     context, RoutePaths.loginscreen);
-            },
-            child: const Text(
-              "Okay ",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
-      ).show();
-    }
-  }
+  //     setState(() {});
+  //   } else {
+  //     return somethingWentWrong(false, context);
+  //   }
+  // }
 
   cancelAppointment(int idd) async {
     var base = Api.baseUrl;
@@ -3074,77 +1999,14 @@ class _HomePageState extends State<HomeScreen> {
       var body = json.decode(response.body);
       var t = body['code'];
       if (t == 200) {
-        getBookedAppointment();
-        getRecommendAppointment();
+        _doctorDashboardBloc.fetchRecommendedAndBookedAppointments();
       } else {
         print('not deleted');
       }
     } else {
-      return Alert(
-        closeIcon: null,
-        style: const AlertStyle(),
-        context: context,
-        padding: const EdgeInsets.all(20),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Image(
-              image: AssetImage(LocalImages.alert),
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(height: 20),
-            Text("Alert",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center),
-            SizedBox(height: 5),
-            Text(
-              "Something went wrong",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-        buttons: [
-          DialogButton(
-            margin: const EdgeInsets.only(left: 20),
-            color: const Color.fromARGB(159, 114, 190, 21),
-            radius: BorderRadius.circular(20),
-            onPressed: () async {
-              Navigator.pop(context);
-
-              // await Navigator.pushReplacementNamed(
-              //     context, RoutePaths.loginscreen);
-            },
-            child: const Text(
-              "Okay ",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
-      ).show();
+      return somethingWentWrong(false, context);
     }
   }
-
-  //getTwoMinutesBefore twoMinutesMOdel;
-
-//   /Doctor/BookDoctorNewAppointment   [httppost]
-// {
-// file:"",
-// AppointmentTitle:"",
-// DoctorConsultationId:"jis doctor ke sath book kr rhe h uski id".
-// DoctorId:"tmhare doctor ki id",
-// SlotId:"",
-// Duration:"",
-// StartDate:"",
-// Name:""
-// }
 
   BookDoctorNewAppointment(multiformData) async {
     busy = true;
@@ -3220,8 +2082,7 @@ class _HomePageState extends State<HomeScreen> {
       model1 = [];
       model2 = [];
       allList = [];
-      getBookedAppointment();
-      getRecommendAppointment();
+      _doctorDashboardBloc.fetchRecommendedAndBookedAppointments();
       appointmentPurpose.text = "";
     } else {
       Alert(
@@ -3273,8 +2134,7 @@ class _HomePageState extends State<HomeScreen> {
       model1 = [];
       model2 = [];
       allList = [];
-      getBookedAppointment();
-      getRecommendAppointment();
+      _doctorDashboardBloc.fetchRecommendedAndBookedAppointments();
       appointmentPurpose.text = "";
     }
   }
@@ -3516,6 +2376,163 @@ class _HomePageState extends State<HomeScreen> {
         ],
       ).show();
     }
+  }
+
+  void showAppointmentConfirmation(BuildContext context, e) {
+    final appointmentPurpose = TextEditingController();
+    final w = MediaQuery.of(context).size.width;
+
+    Alert(
+      closeIcon: null,
+      style: AlertStyle(),
+      context: context,
+      padding: EdgeInsets.all(20),
+      content: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const <Widget>[
+          Image(
+            image: AssetImage(LocalImages.cancel),
+            width: 50,
+            height: 50,
+          ),
+          SizedBox(height: 20),
+          Text(
+            "BOOK APPOINTMENT",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 5),
+          Text(
+            "Are you sure you want to book this appointment",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          margin: EdgeInsets.only(left: 20),
+          color: Colors.red[500],
+          radius: BorderRadius.circular(20),
+          onPressed: () async {
+            Navigator.pop(context);
+
+            Alert(
+              onWillPopActive: false,
+              closeIcon: null,
+              style: AlertStyle(),
+              context: context,
+              padding: EdgeInsets.all(20),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(height: 20),
+                  Text(
+                    "Enter appointment purpose",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 5),
+                  TextFormField(
+                    controller: appointmentPurpose,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: w / 30,
+                    ),
+                    decoration: InputDecoration(
+                      hintStyle: TextStyle(
+                        color: Colors.black,
+                        fontSize: w / 30,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
+                      ),
+                      fillColor: Color.fromARGB(239, 239, 247, 248),
+                      filled: true,
+                    ),
+                  ),
+                ],
+              ),
+              buttons: [
+                DialogButton(
+                  margin: const EdgeInsets.only(left: 20),
+                  color: Colors.red[500],
+                  radius: BorderRadius.circular(20),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    final storage = FlutterSecureStorage();
+                    var id = await storage.read(key: 'id');
+                    FormData formData = FormData.fromMap({
+                      'file': "",
+                      'AppointmentTitle': appointmentPurpose.text,
+                      'DoctorConsultationId': e['doctorId'],
+                      'DoctorId': id.toString(),
+                      'SlotId': e['slotId'],
+                      'Duration': e['duration'],
+                      'StartDate': e['toTime'],
+                      'Name': "",
+                    });
+
+                    BookDoctorNewAppointment(formData);
+                  },
+                  child: const Text(
+                    "Done",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                DialogButton(
+                  margin: EdgeInsets.only(right: 20, left: 10),
+                  color: Colors.grey[800],
+                  radius: BorderRadius.circular(20),
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    "Cancel",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ).show();
+          },
+          child: const Text(
+            "Yes",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        DialogButton(
+          margin: EdgeInsets.only(right: 20, left: 10),
+          color: Colors.grey[800],
+          radius: BorderRadius.circular(20),
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            "Cancel",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ],
+    ).show();
   }
 }
 
