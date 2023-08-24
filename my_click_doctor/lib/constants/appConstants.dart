@@ -11,13 +11,9 @@ class AppColors {
 }
 
 class Api {
-  static const baseUrl =
-      'https://testapi.myclickdoctor.com/api/'; //'https://api.myclickdoctor.com/v3/api';
-  static const imageBaseUrl =
-      'https://testapi.myclickdoctor.com/'; //'https://api.myclickdoctor.com/v3/';
-  static const imageBaseUrl2 =
-      'https://testapi.myclickdoctor.com/'; //'https://api.myclickdoctor.com/v3';
-
+  static const baseUrl = 'https://testapi.myclickdoctor.com/api';
+  static const imageBaseUrl = 'https://testapi.myclickdoctor.com/';
+  static const imageBaseUrl2 = 'https://testapi.myclickdoctor.com/';
 }
 
 class ApiEndPoints {
@@ -30,6 +26,4 @@ class ApiEndPoints {
 // Dark blue button - 314052
 // light green eff7f8
 // Red-f93838
-
-
 // light gray - bebfc6

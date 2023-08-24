@@ -6,13 +6,15 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../constants/appConstants.dart';
+import '../models/doctorProfile_model.dart';
 
 class ApiService {
   final storage = FlutterSecureStorage();
   final http.Client _client = http.Client();
+  var base = Api.baseUrl;
 
   Future<Map<String, dynamic>> login(String username, String password) async {
-    final url = Uri.parse('${Api.baseUrl}Account/Login');
+    final url = Uri.parse('$base/Account/Login');
 
     final response = await _client.post(
       url,
@@ -37,7 +39,7 @@ class ApiService {
     try {
       var id = await storage.read(key: 'id');
       var token = await storage.read(key: 'token');
-      var base = Api.baseUrl;
+
       var response = await _client.get(
         Uri.parse('$base/Doctor/GetDoctorRecomndedTimeslot?DocId=$id'),
         headers: <String, String>{
@@ -62,7 +64,7 @@ class ApiService {
     try {
       var id = await storage.read(key: 'id');
       var token = await storage.read(key: 'token');
-      var base = Api.baseUrl;
+
       var response = await _client.get(
         Uri.parse('$base/Doctor/GetDoctorRecomndedTimeslot?DocId=$id'),
         headers: <String, String>{
@@ -80,6 +82,19 @@ class ApiService {
       }
     } catch (error) {
       throw error;
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchDoctorProfile() async {
+    String id = await storage.read(key: 'userId');
+    final response =
+        await http.get(Uri.parse('$base/Pharmacy/GetDoctorProfile?UserId=$id'));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to load data');
     }
   }
 

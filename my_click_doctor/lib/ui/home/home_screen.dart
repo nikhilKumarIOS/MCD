@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:custom_pop_up_menu/custom_pop_up_menu.dart';
@@ -19,7 +20,12 @@ import 'package:file_picker/file_picker.dart';
 import 'package:zoom_widget/zoom_widget.dart';
 
 import '../../constants/LocalImages.dart';
+import '../../models/doctorProfile_model.dart';
 import '../../widgets/alerts.dart';
+import '../baseUI/baseUI.dart';
+import '../baseUI/baseUI_bloc/baseUI_bloc.dart';
+import '../baseUI/baseUI_bloc/baseUI_events.dart';
+import '../baseUI/baseUI_bloc/baseUI_state.dart';
 import 'home_bloc/home_bloc.dart';
 import 'home_bloc/home_state.dart';
 
@@ -48,7 +54,7 @@ class _HomePageState extends State<HomeScreen> {
   var busy = false;
   var noData = false;
   var doctorType = "";
-
+  final storage = FlutterSecureStorage();
   var client = http.Client();
   final _doctorDashboardBloc = DoctorDashboardBloc();
   final popUpControler = CustomPopupMenuController();
@@ -57,7 +63,7 @@ class _HomePageState extends State<HomeScreen> {
   void initState() {
     super.initState();
 
-    _doctorDashboardBloc.fetchRecommendedAndBookedAppointments();
+    getStorageData();
 
     timer = Timer.periodic(
       Duration(seconds: 15),
@@ -72,614 +78,481 @@ class _HomePageState extends State<HomeScreen> {
     super.dispose();
   }
 
+  getStorageData() async {
+    doctorType = await storage.read(key: 'dtype');
+  }
+
   @override
   Widget build(BuildContext context) {
+    _doctorDashboardBloc.fetchRecommendedAndBookedAppointments();
     var h = MediaQuery.of(context).size.height;
     var w = MediaQuery.of(context).size.width;
     return SafeArea(
-        child: WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        backgroundColor: const Color.fromARGB(239, 239, 247, 248),
-        body: SizedBox(
-          height: h,
-          width: w,
-          child: Stack(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Image(
-                                  height: h / 15,
-                                  image: const AssetImage(LocalImages.logo)),
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  (doctorType == "KeyOpinionLeader")
-                                      ? ClipOval(
-                                          child: Material(
-                                            color: AppColors.green,
-                                            child: InkWell(
-                                              splashColor: Colors.black,
-                                              onTap: () {
-                                                Navigator.pushNamed(
-                                                    context,
-                                                    RoutePaths
-                                                        .timeWindowManagementSCreen);
-                                              },
-                                              child: Container(
-                                                  margin: EdgeInsets.all(10),
-                                                  width: h / 40,
-                                                  height: h / 40,
-                                                  child: const Image(
-                                                      image: AssetImage(
-                                                          LocalImages
-                                                              .greenjoincall))),
-                                            ),
-                                          ),
+        child: Scaffold(
+      backgroundColor: const Color.fromARGB(239, 239, 247, 248),
+      body: SizedBox(
+        height: h,
+        width: w,
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                BaseUI(title: "DashBoard", hideLogo: false),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20, left: 20, right: 20, bottom: 0),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: (userGuidesSelected == true)
+                                      ? RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10)),
                                         )
-                                      : SizedBox(),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Container(
-                                    height: h / 14,
-                                    width: w / 2.8,
-                                    decoration: const BoxDecoration(
-                                      color: Color.fromARGB(216, 2, 7, 29),
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(30.0),
-                                      ),
-                                    ),
-                                    child: Row(
+                                      : RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    userGuidesSelected = !userGuidesSelected;
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 15),
-                                            child: Row(
-                                              children: [
-                                                ClipOval(
-                                                  child: Material(
-                                                    color: Colors
-                                                        .white, // Button color
-                                                    child: InkWell(
-                                                      splashColor: Colors
-                                                          .black, // Splash color
-                                                      onTap: () {
-                                                        Navigator.pushNamed(
-                                                            context,
-                                                            RoutePaths
-                                                                .supportScreen);
-                                                      },
-                                                      child: Container(
-                                                          margin:
-                                                              EdgeInsets.all(
-                                                                  10),
-                                                          width: h / 46,
-                                                          height: h / 46,
-                                                          child: const Image(
-                                                              image: AssetImage(
-                                                                  'assets/question-sign.png'))),
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 10,
-                                                ),
-                                                CustomPopupMenu(
-                                                  controller: popUpControler,
-                                                  child: CircleAvatar(
-                                                    radius: h / 40,
-                                                    backgroundColor:
-                                                        Colors.grey[200],
-                                                    child: CircleAvatar(
-                                                      radius: h / 22,
-                                                      backgroundImage:
-                                                          (profileimage == null)
-                                                              ? const AssetImage(
-                                                                  LocalImages
-                                                                      .profile)
-                                                              : NetworkImage(
-                                                                  profileimage),
-                                                    ),
-                                                  ),
-
-                                                  menuBuilder: () =>
-                                                      GestureDetector(
-                                                    child: _buildAvatar(),
-                                                  ),
-                                                  barrierColor:
-                                                      Colors.transparent,
-                                                  pressType:
-                                                      PressType.singleClick,
-                                                  arrowColor: Colors.blueAccent,
-                                                  // position:
-                                                  //     PreferredPosition.top,
-                                                ),
-                                              ],
-                                            ))
+                                        Image(
+                                            height: h / 46,
+                                            image:
+                                                AssetImage(LocalImages.info)),
+                                        const SizedBox(width: 10),
+                                        Text('User guides',
+                                            style: TextStyle(
+                                              fontSize: w / 30,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            )),
                                       ],
                                     ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          )),
-                      Padding(
-                          padding: EdgeInsets.only(top: 20),
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: 20),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Image(
-                                        height: h / 56,
-                                        image:
-                                            AssetImage('assets/four-dots.png')),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text('Dashboard',
-                                        style: TextStyle(
-                                          fontSize: w / 26,
-                                          fontWeight: FontWeight.w800,
-                                          color: Colors.black,
-                                        )),
-                                  ],
-                                )
-                              ],
-                            ),
-                          )),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 20, left: 20, right: 20, bottom: 0),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0.0,
-                              shadowColor: Colors.transparent,
-                              shape: (userGuidesSelected == true)
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10)),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        (userGuidesSelected == true)
+                                            ? Icon(
+                                                Icons.keyboard_arrow_down,
+                                                color: Colors.grey,
+                                                size: h / 56.0,
+                                              )
+                                            : Icon(
+                                                Icons.arrow_forward_ios_rounded,
+                                                color: Colors.grey,
+                                                size: h / 56.0,
+                                              )
+                                      ],
                                     )
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
+                                  ],
+                                )),
+                          ),
+                          if (userGuidesSelected)
+                            Padding(
+                                padding: EdgeInsets.only(left: 20, right: 20),
+                                child: Container(
+                                    height: h / 3,
+                                    width: w,
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(10)),
+                                      color: Colors.white,
                                     ),
-                              minimumSize: const Size.fromHeight(60),
-                              backgroundColor: Colors.white,
-                            ),
-                            onPressed: () async {
-                              setState(() {
-                                if (userGuidesSelected == false) {
-                                  userGuidesSelected = true;
-                                } else if (userGuidesSelected == true) {
-                                  userGuidesSelected = false;
-                                }
-                              });
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Image(
-                                        height: h / 46,
-                                        image: AssetImage(LocalImages.info)),
-                                    const SizedBox(width: 10),
-                                    Text('User guides',
-                                        style: TextStyle(
-                                          fontSize: w / 30,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black,
-                                        )),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    (userGuidesSelected == true)
-                                        ? Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: Colors.grey,
-                                            size: h / 56.0,
-                                          )
-                                        : Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: Colors.grey,
-                                            size: h / 56.0,
-                                          )
-                                  ],
-                                )
-
-                                //   ],
-                                // )
-                              ],
-                            )),
-                      ),
-                      (userGuidesSelected == true)
-                          ? Padding(
-                              padding: EdgeInsets.only(left: 20, right: 20),
-                              child: Container(
-                                  height: h / 3,
-                                  width: w,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    color: Colors.white,
-                                  ),
-                                  child: Zoom(
-                                      enableScroll: true,
-                                      zoomSensibility: 10.0,
-                                      maxZoomWidth: 2100,
-                                      maxZoomHeight: 2100,
-                                      child: Center(
-                                          child: const WebView(
-                                        zoomEnabled: true,
-                                        initialUrl:
-                                            'https://doctortest.medicalscan.hu/mcdreg/doc?tipus=slider',
-                                        javascriptMode:
-                                            JavascriptMode.unrestricted,
-                                      )))))
-                          : SizedBox(),
-                      (joinCallhideShow == true)
-                          ? Padding(
-                              padding: const EdgeInsets.all(20),
-                              child: Container(
-                                width: w,
-                                height: h / 8,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                    image: DecorationImage(
-                                        image: AssetImage('assets/bg.png'),
-                                        fit: BoxFit.fill)),
-                                child: Column(
-                                  children: [
-                                    Padding(
-                                        padding: EdgeInsets.only(
-                                            top: 60, left: 0, right: 0),
-                                        child: InkWell(
-                                            onTap: () {
-                                              Alert(
-                                                closeIcon: null,
-                                                style: AlertStyle(),
-                                                context: context,
-                                                padding: EdgeInsets.all(20),
-                                                content: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: <Widget>[
-                                                    Image(
-                                                      image: AssetImage(
-                                                          LocalImages
-                                                              .greenPhone),
-                                                      width: 50,
-                                                      height: 50,
-                                                    ),
-                                                    SizedBox(height: 20),
-                                                    Text("JOIN CALL",
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
+                                    child: Zoom(
+                                        enableScroll: true,
+                                        zoomSensibility: 10.0,
+                                        maxZoomWidth: 2100,
+                                        maxZoomHeight: 2100,
+                                        child: Center(
+                                            child: const WebView(
+                                          zoomEnabled: true,
+                                          initialUrl:
+                                              'https://doctortest.medicalscan.hu/mcdreg/doc?tipus=slider',
+                                          javascriptMode:
+                                              JavascriptMode.unrestricted,
+                                        ))))),
+                          (joinCallhideShow == true)
+                              ? Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Container(
+                                    width: w,
+                                    height: h / 8,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.white,
+                                        image: DecorationImage(
+                                            image: AssetImage('assets/bg.png'),
+                                            fit: BoxFit.fill)),
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 60, left: 0, right: 0),
+                                            child: InkWell(
+                                                onTap: () {
+                                                  Alert(
+                                                    closeIcon: null,
+                                                    style: AlertStyle(),
+                                                    context: context,
+                                                    padding: EdgeInsets.all(20),
+                                                    content: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: <Widget>[
+                                                        Image(
+                                                          image: AssetImage(
+                                                              LocalImages
+                                                                  .greenPhone),
+                                                          width: 50,
+                                                          height: 50,
                                                         ),
-                                                        textAlign:
-                                                            TextAlign.center),
-                                                    SizedBox(height: 5),
-                                                    Text(
-                                                      "The call will start in two minutes.",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontSize: 12,
-                                                      ),
+                                                        SizedBox(height: 20),
+                                                        Text("JOIN CALL",
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
+                                                            textAlign: TextAlign
+                                                                .center),
+                                                        SizedBox(height: 5),
+                                                        Text(
+                                                          "The call will start in two minutes.",
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                  ],
-                                                ),
-                                                buttons: [
-                                                  DialogButton(
-                                                    margin: EdgeInsets.only(
-                                                        left: 20),
-                                                    color: Color.fromARGB(
-                                                        159, 114, 190, 21),
-                                                    radius:
+                                                    buttons: [
+                                                      DialogButton(
+                                                        margin: EdgeInsets.only(
+                                                            left: 20),
+                                                        color: Color.fromARGB(
+                                                            159, 114, 190, 21),
+                                                        radius: BorderRadius
+                                                            .circular(20),
+                                                        onPressed: () async {
+                                                          Navigator.pop(
+                                                              context);
+                                                          meetingEndStatus(
+                                                              iddd,
+                                                              appntmntId,
+                                                              useridd);
+                                                        },
+                                                        child: Text(
+                                                          "JOIN CALL",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white,
+                                                              letterSpacing:
+                                                                  0.5,
+                                                              fontSize: 18),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ).show();
+                                                },
+                                                child: Container(
+                                                  width: 70,
+                                                  height: h / 28,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
                                                         BorderRadius.circular(
                                                             20),
-                                                    onPressed: () async {
-                                                      Navigator.pop(context);
-                                                      meetingEndStatus(iddd,
-                                                          appntmntId, useridd);
-                                                    },
-                                                    child: Text(
-                                                      "JOIN CALL",
-                                                      style: TextStyle(
-                                                          color: Colors.white,
-                                                          letterSpacing: 0.5,
-                                                          fontSize: 18),
-                                                    ),
+                                                    color: Colors.white,
                                                   ),
-                                                ],
-                                              ).show();
-                                            },
-                                            child: Container(
-                                              width: 70,
-                                              height: h / 28,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                                color: Colors.white,
-                                              ),
-                                              child: Container(
-                                                margin: EdgeInsets.all(10),
-                                                child: Text('JOIN CALL',
-                                                    style: TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      color: Colors.black,
-                                                    )),
-                                              ),
-                                            )))
-                                  ],
-                                ),
-                              ))
-                          : Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Container(),
-                            ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          right: 20,
-                        ),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0.0,
-                              shadowColor: Colors.transparent,
-                              shape: (widgetSelected == true)
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10)),
-                                    )
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
+                                                  child: Container(
+                                                    margin: EdgeInsets.all(10),
+                                                    child: Text('JOIN CALL',
+                                                        style: TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                          color: Colors.black,
+                                                        )),
+                                                  ),
+                                                )))
+                                      ],
                                     ),
-                              minimumSize: const Size.fromHeight(60),
-                              backgroundColor: Colors.white,
+                                  ))
+                              : Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Container(),
+                                ),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              left: 20,
+                              right: 20,
                             ),
-                            onPressed: () async {
-                              setState(() {
-                                if (widgetSelected == true) {
-                                  widgetSelected = false;
-                                } else if (widgetSelected == false) {
-                                  widgetSelected = true;
-                                }
-                              });
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: (widgetSelected == true)
+                                      ? RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10)),
+                                        )
+                                      : RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    if (widgetSelected == true) {
+                                      widgetSelected = false;
+                                    } else if (widgetSelected == false) {
+                                      widgetSelected = true;
+                                    }
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Image(
+                                            height: h / 46,
+                                            image: const AssetImage(
+                                                LocalImages.calendar)),
+                                        const SizedBox(width: 10),
+                                        Text('Booked Appointments',
+                                            style: TextStyle(
+                                              fontSize: w / 30,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            )),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        (widgetSelected == true)
+                                            ? Icon(
+                                                Icons.keyboard_arrow_down,
+                                                color: Colors.grey,
+                                                size: h / 56.0,
+                                              )
+                                            : Icon(
+                                                Icons.arrow_forward_ios_rounded,
+                                                color: Colors.grey,
+                                                size: h / 56.0,
+                                              )
+                                      ],
+                                    )
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
+                          ),
+                          (widgetSelected == true)
+                              ? Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: BookedAppointment())
+                              : Container(),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20, left: 20, right: 20),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: (medicalSelected == true)
+                                      ? RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10),
+                                              topRight: Radius.circular(10)),
+                                        )
+                                      : RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(10),
+                                          ),
+                                        ),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    if (medicalSelected == false) {
+                                      medicalSelected = true;
+                                    } else if (medicalSelected == true) {
+                                      medicalSelected = false;
+                                    }
+                                  });
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Image(
+                                            height: h / 46,
+                                            image: const AssetImage(
+                                                'assets/info1.png')),
+                                        const SizedBox(width: 10),
+                                        Text('Previous MedicalScan Webinar',
+                                            style: TextStyle(
+                                              fontSize: w / 30,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            )),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        (medicalSelected == true)
+                                            ? Icon(
+                                                Icons.keyboard_arrow_down,
+                                                color: Colors.grey,
+                                                size: h / 56.0,
+                                              )
+                                            : Icon(
+                                                Icons.arrow_forward_ios_rounded,
+                                                color: Colors.grey,
+                                                size: h / 56.0,
+                                              )
+                                      ],
+                                    )
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
+                          ),
+                          (medicalSelected == true)
+                              ? Padding(
+                                  padding: EdgeInsets.only(
+                                      right: 20, left: 20, bottom: 20),
+                                  child: Container(
+                                      height: h / 3,
+                                      width: w,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        color: Colors.white,
+                                      ),
+                                      child: Zoom(
+                                          enableScroll: true,
+                                          zoomSensibility: 10.0,
+                                          maxZoomWidth: 2100,
+                                          maxZoomHeight: 2100,
+                                          child: Center(
+                                              child: const WebView(
+                                            zoomEnabled: true,
+                                            initialUrl:
+                                                'https://doctortest.medicalscan.hu/mcdreg/webinarlist',
+                                            javascriptMode:
+                                                JavascriptMode.unrestricted,
+                                          )))))
+                              : SizedBox(),
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, top: 20),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor:
+                                      const Color.fromARGB(159, 114, 190, 21),
+                                ),
+                                onPressed: () async {
+                                  Navigator.pop(context);
+                                  await Navigator.pushNamed(context,
+                                      RoutePaths.bookAppointmentScreen);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Image(
                                         height: h / 46,
                                         image: const AssetImage(
                                             LocalImages.calendar)),
                                     const SizedBox(width: 10),
-                                    Text('Booked Appointments',
-                                        style: TextStyle(
-                                          fontSize: w / 30,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black,
-                                        )),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    (widgetSelected == true)
-                                        ? Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: Colors.grey,
-                                            size: h / 56.0,
-                                          )
-                                        : Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: Colors.grey,
-                                            size: h / 56.0,
-                                          )
-                                  ],
-                                )
 
-                                //   ],
-                                // )
-                              ],
-                            )),
-                      ),
-                      (widgetSelected == true)
-                          ? Padding(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              child: BookedAppointment())
-                          : Container(),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 20, left: 20, right: 20),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0.0,
-                              shadowColor: Colors.transparent,
-                              shape: (medicalSelected == true)
-                                  ? RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(10)),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Text('BOOKING APPOINTMENT',
+                                            style: TextStyle(
+                                              fontSize: w / 30,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black,
+                                            )),
+                                        SizedBox(
+                                          width: w / 5,
+                                        )
+                                      ],
                                     )
-                                  : RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(10),
-                                      ),
-                                    ),
-                              minimumSize: const Size.fromHeight(60),
-                              backgroundColor: Colors.white,
-                            ),
-                            onPressed: () async {
-                              setState(() {
-                                if (medicalSelected == false) {
-                                  medicalSelected = true;
-                                } else if (medicalSelected == true) {
-                                  medicalSelected = false;
-                                }
-                              });
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Image(
-                                        height: h / 46,
-                                        image: const AssetImage(
-                                            'assets/info1.png')),
-                                    const SizedBox(width: 10),
-                                    Text('Previous MedicalScan Webinar',
-                                        style: TextStyle(
-                                          fontSize: w / 30,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black,
-                                        )),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    (medicalSelected == true)
-                                        ? Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: Colors.grey,
-                                            size: h / 56.0,
-                                          )
-                                        : Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: Colors.grey,
-                                            size: h / 56.0,
-                                          )
-                                  ],
-                                )
 
-                                //   ],
-                                // )
-                              ],
-                            )),
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
+                          ),
+                          SizedBox(
+                            height: 100,
+                          )
+                        ],
                       ),
-                      (medicalSelected == true)
-                          ? Padding(
-                              padding: EdgeInsets.only(
-                                  right: 20, left: 20, bottom: 20),
-                              child: Container(
-                                  height: h / 3,
-                                  width: w,
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                    color: Colors.white,
-                                  ),
-                                  child: Zoom(
-                                      enableScroll: true,
-                                      zoomSensibility: 10.0,
-                                      maxZoomWidth: 2100,
-                                      maxZoomHeight: 2100,
-                                      child: Center(
-                                          child: const WebView(
-                                        zoomEnabled: true,
-                                        initialUrl:
-                                            'https://doctortest.medicalscan.hu/mcdreg/webinarlist',
-                                        javascriptMode:
-                                            JavascriptMode.unrestricted,
-                                      )))))
-                          : SizedBox(),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(left: 20, right: 20, top: 20),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              elevation: 0.0,
-                              shadowColor: Colors.transparent,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              minimumSize: const Size.fromHeight(60),
-                              backgroundColor:
-                                  const Color.fromARGB(159, 114, 190, 21),
-                            ),
-                            onPressed: () async {
-                              Navigator.pop(context);
-                              await Navigator.pushNamed(
-                                  context, RoutePaths.bookAppointmentScreen);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Image(
-                                    height: h / 46,
-                                    image:
-                                        const AssetImage(LocalImages.calendar)),
-                                const SizedBox(width: 10),
-
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text('BOOKING APPOINTMENT',
-                                        style: TextStyle(
-                                          fontSize: w / 30,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black,
-                                        )),
-                                    SizedBox(
-                                      width: w / 5,
-                                    )
-                                  ],
-                                )
-
-                                //   ],
-                                // )
-                              ],
-                            )),
-                      ),
-                      SizedBox(
-                        height: 100,
-                      )
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ),
       ),
     ));
@@ -807,445 +680,6 @@ class _HomePageState extends State<HomeScreen> {
   }
 
   CarouselController controllerC = CarouselController();
-
-  Widget _imageSlider() {
-    var h = MediaQuery.of(context).size.height;
-    var w = MediaQuery.of(context).size.width;
-    return CarouselSlider(
-      carouselController: controllerC,
-      options: CarouselOptions(
-        height: h / 2.5,
-        viewportFraction: 0.9,
-        aspectRatio: 2.0,
-        initialPage: 0,
-        enableInfiniteScroll: true,
-        reverse: false,
-        autoPlay: true,
-        autoPlayInterval: const Duration(seconds: 5),
-        autoPlayAnimationDuration: const Duration(milliseconds: 3000),
-        autoPlayCurve: Curves.linear,
-        enlargeCenterPage: false,
-        scrollDirection: Axis.horizontal,
-      ),
-      items: model1?.map((e) {
-        return Container(
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Container(
-                  decoration: const BoxDecoration(
-                    color: Color.fromARGB(239, 239, 247, 248),
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                  height: h / 2.6,
-                  width: w / 2.4,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10),
-                        child: CircleAvatar(
-                          radius: h / 20,
-                          backgroundColor: Colors.white, // Image radius
-                          backgroundImage: (e['photoUrl'] == null)
-                              ? AssetImage(LocalImages.doctorPic)
-                              : NetworkImage(
-                                      Api.imageBaseUrl + e['photoUrl'] ?? "")
-                                  as ImageProvider,
-                        ),
-                      ),
-                      Text(
-                        e['firstName'] ?? "",
-                        style: TextStyle(
-                            fontSize: h / 68, fontWeight: FontWeight.w800),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 10,
-                        ),
-                        child: Container(
-                          //  color: Colors.amber,
-                          width: w / 2.4,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image(
-                                  height: h / 56,
-                                  image: AssetImage('assets/stethoscope.png')),
-                              const SizedBox(width: 5),
-                              Text(
-                                "specialty - ",
-                                style: TextStyle(
-                                  fontSize: w / 46,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.black,
-                                ),
-                                maxLines: 4,
-                                softWrap: !true,
-                              ),
-                              Expanded(
-                                  child: Text(
-                                e["expert"]
-                                    .map((e) => e["specialization"])
-                                    .toString(),
-                                style: TextStyle(
-                                  fontSize: w / 46,
-                                  fontWeight: FontWeight.w800,
-                                  color: Colors.black,
-                                ),
-                              )),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 10,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.calendar_month_outlined,
-                              color: Colors.grey,
-                              size: h / 56,
-                            ),
-                            const SizedBox(width: 5),
-                            Expanded(
-                                child: Text(
-                              formatDate(
-                                  DateTime.parse(
-                                      e["appointmentDate"].toString()),
-                                  [dd, '/', mm, '/', yyyy, ' ', HH, ':', nn]),
-                              style: TextStyle(
-                                fontSize: w / 46,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                              maxLines: 4,
-                            )),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 10,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image(
-                                height: h / 56,
-                                image: AssetImage('assets/repeat.png')),
-                            const SizedBox(width: 5),
-                            Text(
-                              "Slot- ",
-                              style: TextStyle(
-                                fontSize: w / 46,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                              maxLines: 4,
-                            ),
-                            Text(
-                              formatDate(
-                                  DateTime.parse(e["fromTime"].toString()),
-                                  [HH, ':', nn]),
-                              style: TextStyle(
-                                fontSize: w / 46,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                              maxLines: 4,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              formatDate(DateTime.parse(e["toTime"].toString()),
-                                  ['-', HH, ':', nn]),
-                              style: TextStyle(
-                                fontSize: w / 46,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.black,
-                              ),
-                              maxLines: 4,
-                            )
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 10,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image(
-                                height: h / 56,
-                                image: AssetImage('assets/repeat.png')),
-                            const SizedBox(width: 5),
-                            Expanded(
-                                child: Row(
-                              children: [
-                                Text(
-                                  "Duration- ",
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-                                  maxLines: 4,
-                                ),
-                                Text(
-                                  e["duration"].toString() ?? "" ' minutes',
-                                  style: TextStyle(
-                                    fontSize: w / 46,
-                                    fontWeight: FontWeight.w800,
-                                    color: Colors.black,
-                                  ),
-                                  maxLines: 4,
-                                )
-                              ],
-                            )),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 20,
-                          top: 10,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image(
-                                height: h / 66,
-                                image: AssetImage('assets/category-(2).png')),
-                            const SizedBox(width: 5),
-                            Expanded(
-                                child: Container(
-                              width: w / 2.4,
-                              child: Row(
-                                children: [
-                                  Text(
-                                    "Type- ",
-                                    style: TextStyle(
-                                      fontSize: w / 46,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.black,
-                                    ),
-                                    maxLines: 4,
-                                  ),
-                                  Text(
-                                    e["appointmentType"] ?? "",
-                                    style: TextStyle(
-                                      fontSize: w / 46,
-                                      fontWeight: FontWeight.w800,
-                                      color: Colors.black,
-                                    ),
-                                    softWrap: true,
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 4,
-                                  )
-                                ],
-                              ),
-                            )),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: Container(
-                              height: h / 30,
-                              child: ElevatedButton(
-                                child: Text(
-                                  "MORE INFORMATION",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    letterSpacing: .5,
-                                    fontSize: h / 180,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  Navigator.pushNamed(context,
-                                      RoutePaths.appointmentDetailScreen,
-                                      arguments: {
-                                        'key1':
-                                            e["appointmentId"].toString() ?? "",
-                                        'key2': e["id"].toString() ?? "",
-                                        'key3':
-                                            e["appointmentCode"].toString() ??
-                                                "",
-                                      });
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    backgroundColor:
-                                        Color.fromARGB(216, 2, 7, 29),
-                                    textStyle: TextStyle(
-                                        fontSize: 2,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                            )),
-                            SizedBox(width: 5),
-                            Expanded(
-                                child: (uploadBusy == false)
-                                    ? Container(
-                                        height: h / 30,
-                                        child: ElevatedButton(
-                                          child: Text(
-                                            'UPLOAD DOCUMENT',
-                                            style: TextStyle(
-                                              color: Colors.black,
-                                              letterSpacing: .5,
-                                              fontSize: h / 180,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            FilePickerResult result =
-                                                await FilePicker.platform
-                                                    .pickFiles(
-                                              type: FileType.custom,
-                                              allowMultiple: false,
-                                              allowedExtensions: [
-                                                'jpg',
-                                                'pdf',
-                                                'doc',
-                                                'ppt',
-                                                'JPEG',
-                                                'png'
-                                              ],
-                                            );
-                                            if (result != null) {
-                                              PlatformFile file =
-                                                  result.files.first;
-                                              var multipartFile =
-                                                  await MultipartFile.fromFile(
-                                                file.path,
-                                              );
-                                              FormData formData =
-                                                  FormData.fromMap({
-                                                'file': multipartFile,
-                                                'MeetingId':
-                                                    e["appointmentCode"] ?? "",
-                                                'Usertype': '2',
-                                                'Id': e["id"] ?? "".toString(),
-                                              });
-
-                                              UploadShareDocument(formData);
-                                            } else {}
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              textStyle: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
-                                      )
-                                    : CircularProgressIndicator(
-                                        color: AppColors.green,
-                                      ))
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(right: 10, left: 10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: Container(
-                              height: h / 30,
-                              child: ElevatedButton(
-                                child: Text(
-                                  "CANCEL APPOINTMENT",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    // letterSpacing: .4,
-                                    fontSize: h / 180,
-                                  ),
-                                ),
-                                onPressed: () {
-                                  cancelAppointmentAlert(
-                                      e["appointmentId"] ?? "", context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10)),
-                                    backgroundColor: Colors.red[
-                                        600], //Color.fromARGB(255, 0, 100, 181),
-                                    textStyle: TextStyle(
-                                        fontSize: 2,
-                                        fontWeight: FontWeight.bold)),
-                              ),
-                            )),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: 6,
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 1,
-                left: 0,
-                right: 0,
-                child: Padding(
-                    padding: EdgeInsets.only(right: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          splashColor: Colors.black, // Splash color
-                          onTap: () {},
-                          child: Container(
-                              margin: EdgeInsets.all(10),
-                              width: h / 46,
-                              height: h / 46,
-                              child: const Image(
-                                  image: AssetImage('assets/bookmark.png'))),
-                        ),
-                        InkWell(
-                          splashColor: Colors.black,
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, RoutePaths.bookAppointmentScreen);
-                          },
-                          child: Container(
-                              color: Colors.white,
-                              width: h / 56,
-                              height: h / 56,
-                              child: const Image(
-                                  image: AssetImage(
-                                      'assets/green-join-call.png'))),
-                        ),
-                      ],
-                    )),
-              ),
-            ],
-          ),
-        );
-      })?.toList(),
-    );
-  }
 
   Widget _image2Slider(List<dynamic> combinedAppointments) {
     var h = MediaQuery.of(context).size.height;
@@ -1631,263 +1065,6 @@ class _HomePageState extends State<HomeScreen> {
         });
   }
 
-  Widget _buildAvatar() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(5),
-      child: Container(
-        color: Colors.white,
-        width: 150,
-        height: 116,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    ClipOval(
-                      child: Material(
-                        color: Colors.grey,
-                        child: InkWell(
-                          splashColor: Colors.black, // Splash color
-                          onTap: () {
-                            popUpControler.hideMenu();
-                            Navigator.pushNamed(
-                                context, RoutePaths.basicInformationScreen);
-                          },
-                          child: Container(
-                              margin: EdgeInsets.all(10),
-                              width: 20,
-                              height: 20,
-                              child: const Image(
-                                color: Color.fromARGB(255, 62, 62, 62),
-                                image: AssetImage(LocalImages.profile),
-                              )),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 2),
-
-                TextButton(
-                  onPressed: () {
-                    popUpControler.hideMenu();
-                    Navigator.pushNamed(
-                        context, RoutePaths.basicInformationScreen);
-                  },
-                  child: Text('Profile',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
-                      )),
-                ),
-
-                //   ],
-                // )
-                // ],
-                //  )
-                //  ),
-                // ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    ClipOval(
-                      child: Material(
-                        color: Colors.grey,
-                        child: InkWell(
-                          splashColor: Colors.black, // Splash color
-                          onTap: () {
-                            popUpControler.hideMenu();
-                            Alert(
-                              closeIcon: null,
-                              style: AlertStyle(),
-                              context: context,
-                              padding: EdgeInsets.all(20),
-                              content: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Image(
-                                    image: AssetImage("assets/alert.png"),
-                                    width: 50,
-                                    height: 50,
-                                  ),
-                                  SizedBox(height: 20),
-                                  Text("LOG OUT",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    "Are you sure you want to log out ?",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              buttons: [
-                                DialogButton(
-                                  margin: EdgeInsets.only(left: 20),
-                                  color: Colors.red[500],
-                                  radius: BorderRadius.circular(20),
-                                  onPressed: () async {
-                                    final storage = FlutterSecureStorage();
-                                    storage.deleteAll();
-                                    Navigator.pushReplacementNamed(
-                                        context, RoutePaths.loginscreen);
-                                  },
-                                  child: Text(
-                                    "Log out",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 16),
-                                  ),
-                                ),
-                                DialogButton(
-                                  margin: EdgeInsets.only(right: 20, left: 10),
-                                  color: Colors.grey[800],
-                                  radius: BorderRadius.circular(20),
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    "Cancel",
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 16),
-                                  ),
-                                ),
-                              ],
-                            ).show();
-
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute<void>(
-                            //       builder: (context) =>
-                            //           BookingAppointmentScreen()),
-                            // );
-                          },
-                          child: Container(
-                              margin: EdgeInsets.all(10),
-                              width: 20,
-                              height: 20,
-                              child: const Image(
-                                color: Color.fromARGB(255, 62, 62, 62),
-                                image: AssetImage(LocalImages.logout),
-                              )),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 2),
-
-                TextButton(
-                    onPressed: () {
-                      popUpControler.hideMenu();
-                      setState(() {});
-                      Alert(
-                        onWillPopActive: false,
-                        closeIcon: null,
-                        style: AlertStyle(),
-                        context: context,
-                        padding: EdgeInsets.all(20),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Image(
-                              image: AssetImage(LocalImages.alert),
-                              width: 50,
-                              height: 50,
-                            ),
-                            SizedBox(height: 20),
-                            Text("LOG OUT",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center),
-                            SizedBox(height: 5),
-                            Text(
-                              "Are you sure you want to log out ?",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                        buttons: [
-                          DialogButton(
-                            margin: EdgeInsets.only(left: 20),
-                            color: Colors.red[500],
-                            radius: BorderRadius.circular(20),
-                            onPressed: () async {
-                              final storage = FlutterSecureStorage();
-                              storage.deleteAll();
-                              Navigator.pushReplacementNamed(
-                                  context, RoutePaths.loginscreen);
-                              // Navigator.of(context)
-                              //     .popUntil((route) => route.isFirst);
-                            },
-                            child: Text(
-                              "Log out",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                          ),
-                          DialogButton(
-                            margin: EdgeInsets.only(right: 20, left: 10),
-                            color: Colors.grey[800],
-                            radius: BorderRadius.circular(20),
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              "Cancel",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                          ),
-                        ],
-                      ).show();
-                    },
-                    child: Text('Logout',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
-                        ))),
-
-                //   ],
-                // )
-                // ],
-                //  )
-                //  ),
-                // ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   //GetBookedAppointmentModel model1;
   //GetRecommendedAppointmentModel model2;
 
@@ -2206,55 +1383,7 @@ class _HomePageState extends State<HomeScreen> {
       // var body = json.decode(response.body);
       return Navigator.pushNamed(context, RoutePaths.callScreen);
     } else {
-      return Alert(
-        closeIcon: null,
-        style: const AlertStyle(),
-        context: context,
-        padding: const EdgeInsets.all(20),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Image(
-              image: AssetImage(LocalImages.alert),
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(height: 20),
-            Text("Alert",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center),
-            SizedBox(height: 5),
-            Text(
-              "Something went wrong",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-        buttons: [
-          DialogButton(
-            margin: const EdgeInsets.only(left: 20),
-            color: const Color.fromARGB(159, 114, 190, 21),
-            radius: BorderRadius.circular(20),
-            onPressed: () async {
-              Navigator.pop(context);
-
-              // await Navigator.pushReplacementNamed(
-              //     context, RoutePaths.loginscreen);
-            },
-            child: const Text(
-              "Okay ",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
-      ).show();
+      return somethingWentWrong(false, context);
     }
   }
 
@@ -2282,99 +1411,9 @@ class _HomePageState extends State<HomeScreen> {
 
     if (Body['code'] == 200) {
       uploadBusy = false;
-      Alert(
-        closeIcon: null,
-        style: const AlertStyle(),
-        context: context,
-        padding: const EdgeInsets.all(20),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Image(
-              image: AssetImage(LocalImages.check),
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(height: 20),
-            Text("Successful",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center),
-            SizedBox(height: 5),
-            Text(
-              "Successfully uploaded",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-        buttons: [
-          DialogButton(
-            margin: const EdgeInsets.only(left: 20),
-            color: const Color.fromARGB(159, 114, 190, 21),
-            radius: BorderRadius.circular(20),
-            onPressed: () async {
-              Navigator.pop(context);
-            },
-            child: const Text(
-              "Okay ",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
-      ).show();
+      return successfullyUploadedNotUploaded(true, context);
     } else {
-      Alert(
-        closeIcon: null,
-        style: const AlertStyle(),
-        context: context,
-        padding: const EdgeInsets.all(20),
-        content: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const <Widget>[
-            Image(
-              image: AssetImage(LocalImages.check),
-              width: 50,
-              height: 50,
-            ),
-            SizedBox(height: 20),
-            Text("Unsuccessful",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center),
-            SizedBox(height: 5),
-            Text(
-              "file has not been uploaded",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
-        buttons: [
-          DialogButton(
-            margin: const EdgeInsets.only(left: 20),
-            color: const Color.fromARGB(159, 114, 190, 21),
-            radius: BorderRadius.circular(20),
-            onPressed: () async {
-              Navigator.pop(context);
-            },
-            child: const Text(
-              "Okay ",
-              style: TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        ],
-      ).show();
+      return successfullyUploadedNotUploaded(false, context);
     }
   }
 
@@ -2533,6 +1572,237 @@ class _HomePageState extends State<HomeScreen> {
         ),
       ],
     ).show();
+  }
+
+  Widget _buildAvatar(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(5),
+      child: Container(
+        color: Colors.white,
+        width: 150,
+        height: 116,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ClipOval(
+                      child: Material(
+                        color: Colors.grey,
+                        child: InkWell(
+                          splashColor: Colors.black, // Splash color
+                          onTap: () {
+                            popUpControler.hideMenu();
+                            Navigator.pushNamed(
+                                context, RoutePaths.basicInformationScreen);
+                          },
+                          child: Container(
+                              margin: EdgeInsets.all(10),
+                              width: 20,
+                              height: 20,
+                              child: const Image(
+                                color: Color.fromARGB(255, 62, 62, 62),
+                                image: AssetImage(LocalImages.profile),
+                              )),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 2),
+                TextButton(
+                  onPressed: () {
+                    popUpControler.hideMenu();
+                    Navigator.pushNamed(
+                        context, RoutePaths.basicInformationScreen);
+                  },
+                  child: Text('Profile',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      )),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 10,
+                    ),
+                    ClipOval(
+                      child: Material(
+                        color: Colors.grey,
+                        child: InkWell(
+                          splashColor: Colors.black, // Splash color
+                          onTap: () {
+                            popUpControler.hideMenu();
+                            Alert(
+                              closeIcon: null,
+                              style: AlertStyle(),
+                              context: context,
+                              padding: EdgeInsets.all(20),
+                              content: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Image(
+                                    image: AssetImage("assets/alert.png"),
+                                    width: 50,
+                                    height: 50,
+                                  ),
+                                  SizedBox(height: 20),
+                                  Text("LOG OUT",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      textAlign: TextAlign.center),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    "Are you sure you want to log out ?",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              buttons: [
+                                DialogButton(
+                                  margin: EdgeInsets.only(left: 20),
+                                  color: Colors.red[500],
+                                  radius: BorderRadius.circular(20),
+                                  onPressed: () async {
+                                    final storage = FlutterSecureStorage();
+                                    storage.deleteAll();
+                                    Navigator.pushReplacementNamed(
+                                        context, RoutePaths.loginscreen);
+                                  },
+                                  child: Text(
+                                    "Log out",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ),
+                                DialogButton(
+                                  margin: EdgeInsets.only(right: 20, left: 10),
+                                  color: Colors.grey[800],
+                                  radius: BorderRadius.circular(20),
+                                  onPressed: () => Navigator.pop(context),
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                ),
+                              ],
+                            ).show();
+                          },
+                          child: Container(
+                              margin: EdgeInsets.all(10),
+                              width: 20,
+                              height: 20,
+                              child: const Image(
+                                color: Color.fromARGB(255, 62, 62, 62),
+                                image: AssetImage(LocalImages.logout),
+                              )),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 2),
+                TextButton(
+                    onPressed: () {
+                      popUpControler.hideMenu();
+                      // setState(() {});
+                      Alert(
+                        onWillPopActive: false,
+                        closeIcon: null,
+                        style: AlertStyle(),
+                        context: context,
+                        padding: EdgeInsets.all(20),
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Image(
+                              image: AssetImage(LocalImages.alert),
+                              width: 50,
+                              height: 50,
+                            ),
+                            SizedBox(height: 20),
+                            Text("LOG OUT",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center),
+                            SizedBox(height: 5),
+                            Text(
+                              "Are you sure you want to log out ?",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                        buttons: [
+                          DialogButton(
+                            margin: EdgeInsets.only(left: 20),
+                            color: Colors.red[500],
+                            radius: BorderRadius.circular(20),
+                            onPressed: () async {
+                              storage.deleteAll();
+                              Navigator.pushReplacementNamed(
+                                  context, RoutePaths.loginscreen);
+                            },
+                            child: Text(
+                              "Log out",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                          DialogButton(
+                            margin: EdgeInsets.only(right: 20, left: 10),
+                            color: Colors.grey[800],
+                            radius: BorderRadius.circular(20),
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(
+                              "Cancel",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ),
+                        ],
+                      ).show();
+                    },
+                    child: Text('Logout',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ))),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

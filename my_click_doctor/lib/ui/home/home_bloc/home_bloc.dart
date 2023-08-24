@@ -1,8 +1,8 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
-
 import '../../../services/api.dart';
+import 'home_events.dart';
 import 'home_state.dart';
-
 import 'package:rxdart/rxdart.dart';
 
 class DoctorDashboardBloc {
@@ -38,3 +38,38 @@ class DoctorDashboardBloc {
     _apiService.dispose();
   }
 }
+
+// Import other necessary classes...
+
+// ... Other imports ...
+
+// class DoctorDashboardBloc
+//     extends Bloc<DoctorDashboardEvent, DoctorDashboardState> {
+//   final ApiService _apiService = ApiService();
+
+//   DoctorDashboardBloc() : super(InitialDoctorDashboardState()) {
+//     on<FetchRecommendedAndBookedAppointmentsEvent>((event, emit) async {
+//       try {
+//         emit(LoadingDoctorDashboardState());
+
+//         final recommendedAppointments =
+//             await _apiService.getRecommendAppointment();
+//         final bookedAppointments = await _apiService.getBookedAppointments();
+
+//         final combinedAppointments =
+//             List.from(recommendedAppointments['specializationCategory'])
+//               ..addAll(bookedAppointments['specializationCategory']);
+
+//         emit(BookedAppointmentsLoadedState(combinedAppointments));
+//       } catch (error) {
+//         emit(ErrorLoadingAppointmentsState(error.toString()));
+//       }
+//     });
+//   }
+
+//   @override
+//   Future<void> close() {
+//     _apiService.dispose();
+//     return super.close();
+//   }
+// }

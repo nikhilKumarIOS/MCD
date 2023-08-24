@@ -8,6 +8,7 @@ import 'package:my_click_doctor/services/router.dart';
 import 'package:my_click_doctor/tabbar_view.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import 'baseUI/baseUI.dart';
 import 'basic_infomation.dart';
 import 'doctor_profile.dart';
 
@@ -41,278 +42,171 @@ class _CallScreenPageState extends State<CallScreen> {
         width: w,
         child: Stack(
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding: const EdgeInsets.only(left: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Ink(
-                              decoration: const ShapeDecoration(
-                                  shape: CircleBorder(),
-                                  color: Color.fromARGB(255, 204, 204, 204)),
-                              child: IconButton(
-                                icon: const Icon(Icons.arrow_back),
-                                iconSize: h / 40,
-                                color: Colors.black,
-                                onPressed: () async {
-                                  Navigator.pop(context);
-                                  await Navigator.pushNamed(
-                                      context, RoutePaths.myTabBar);
-                                },
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                const SizedBox(
-                                  width: 10,
-                                ),
-                                Container(
-                                  height: h / 14,
-                                  width: w / 2.8,
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromARGB(216, 2, 7, 29),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 15),
-                                          child: Row(
-                                            children: [
-                                              ClipOval(
-                                                child: Material(
-                                                  color: Colors
-                                                      .white, // Button color
-                                                  child: InkWell(
-                                                    splashColor: Colors
-                                                        .black, // Splash color
-                                                    onTap: () {
-                                                      Navigator.pushNamed(
-                                                          context,
-                                                          RoutePaths
-                                                              .supportScreen);
-                                                    },
-                                                    child: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(10),
-                                                        width: h / 46,
-                                                        height: h / 46,
-                                                        child: const Image(
-                                                            image: AssetImage(
-                                                                'assets/question-sign.png'))),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              CustomPopupMenu(
-                                                controller: popUpControler,
-                                                child: Image(
-                                                  height: h / 22,
-                                                  width: h / 22,
-                                                  fit: BoxFit.fill,
-                                                  image: const AssetImage(
-                                                      'assets/female-user.png'),
-                                                ),
-                                                menuBuilder: () =>
-                                                    GestureDetector(
-                                                  child: _buildAvatar(),
-                                                ),
-                                                barrierColor:
-                                                    Colors.transparent,
-                                                pressType:
-                                                    PressType.singleClick,
-                                                arrowColor: Colors.blueAccent,
-                                                // position:
-                                                //     PreferredPosition.top,
-                                              ),
-                                            ],
-                                          ))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            children: [
-                              Row(
+            Column(
+              children: [
+                BaseUI(title: "Call", hideLogo: true),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 20, left: 20, right: 20, bottom: 10),
+                              child: Row(
                                 children: [
-                                  Image(
-                                      height: h / 56,
-                                      image:
-                                          AssetImage('assets/four-dots.png')),
-                                  const SizedBox(
+                                  Expanded(
+                                      flex: 1,
+                                      child: SizedBox(
+                                          width: w / 1.6,
+                                          height: h / 16,
+                                          child: DottedBorder(
+                                              borderType: BorderType.RRect,
+                                              radius: Radius.circular(10),
+                                              dashPattern: [8, 8, 8, 8],
+                                              color: Colors.grey,
+                                              strokeWidth: 2,
+                                              child: Card(
+                                                elevation: 0.0,
+                                                color: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
+                                                ),
+                                                child: ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    elevation: 0.0,
+                                                    shadowColor:
+                                                        Colors.transparent,
+                                                    shape: const RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10))),
+                                                    minimumSize:
+                                                        const Size.fromHeight(
+                                                            60),
+                                                    primary:
+                                                        const Color.fromARGB(
+                                                            239, 239, 247, 248),
+                                                  ),
+                                                  child: Container(
+                                                    margin: EdgeInsets.all(10),
+                                                    width: w / 2,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Icon(
+                                                          Icons.upload_file,
+                                                          color: Color.fromARGB(
+                                                              216, 2, 7, 29),
+                                                        ),
+                                                        Text(
+                                                            'UPLOAD \nDOCUMENT',
+                                                            style: TextStyle(
+                                                              fontSize: w / 44,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
+                                                              color: Color
+                                                                  .fromARGB(216,
+                                                                      2, 7, 29),
+                                                            ))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  onPressed: () async {
+                                                    FilePickerResult result =
+                                                        await FilePicker
+                                                            .platform
+                                                            .pickFiles(
+                                                      type: FileType.custom,
+                                                      allowedExtensions: [
+                                                        'jpg',
+                                                        'pdf',
+                                                        'doc'
+                                                      ],
+                                                    );
+                                                    // Navigator.push(
+                                                    //   context,
+                                                    //   MaterialPageRoute<void>(
+                                                    //       builder: (context) => MyTabBar()),
+                                                    // );
+                                                    // Navigator.
+                                                    // Navigator.pop(context);
+                                                  },
+                                                ),
+                                              )))),
+                                  SizedBox(
                                     width: 10,
                                   ),
-                                  Text('Call',
-                                      style: TextStyle(
-                                        fontSize: w / 26,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.black,
+                                  Expanded(
+                                      flex: 1,
+                                      child: Container(
+                                        height: h / 15,
+                                        child: ElevatedButton(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              ImageIcon(AssetImage(
+                                                  'assets/file-upload1.png')),
+                                              Text("CHECK \nDOCUMENTS",
+                                                  style: TextStyle(
+                                                    fontSize: w / 44,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: Colors.white,
+                                                  )),
+                                            ],
+                                          ),
+                                          onPressed: () {
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute<void>(builder: (context) => SignUp()),
+                                            // );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              primary: Color.fromARGB(216, 2, 7,
+                                                  29), //Color.fromARGB(255, 0, 100, 181),
+                                              textStyle: TextStyle(
+                                                  fontSize: 2,
+                                                  fontWeight: FontWeight.bold)),
+                                        ),
                                       )),
                                 ],
-                              )
-                            ],
-                          ),
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            top: 20, left: 20, right: 20, bottom: 10),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                flex: 1,
-                                child: Container(
-                                    width: w / 1.6,
-                                    height: h / 16,
-                                    child: DottedBorder(
-                                        borderType: BorderType.RRect,
-                                        radius: Radius.circular(10),
-                                        dashPattern: [8, 8, 8, 8],
-                                        color: Colors.grey,
-                                        strokeWidth: 2,
-                                        child: Card(
-                                          elevation: 0.0,
-                                          color: Colors.white,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              elevation: 0.0,
-                                              shadowColor: Colors.transparent,
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.all(
-                                                              Radius.circular(
-                                                                  10))),
-                                              minimumSize:
-                                                  const Size.fromHeight(60),
-                                              primary: const Color.fromARGB(
-                                                  239, 239, 247, 248),
-                                            ),
-                                            child: Container(
-                                              margin: EdgeInsets.all(10),
-                                              width: w / 2,
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.upload_file,
-                                                    color: Color.fromARGB(
-                                                        216, 2, 7, 29),
-                                                  ),
-                                                  Text('UPLOAD \nDOCUMENT',
-                                                      style: TextStyle(
-                                                        fontSize: w / 44,
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                        color: Color.fromARGB(
-                                                            216, 2, 7, 29),
-                                                      ))
-                                                ],
-                                              ),
-                                            ),
-                                            onPressed: () async {
-                                              FilePickerResult result =
-                                                  await FilePicker.platform
-                                                      .pickFiles(
-                                                type: FileType.custom,
-                                                allowedExtensions: [
-                                                  'jpg',
-                                                  'pdf',
-                                                  'doc'
-                                                ],
-                                              );
-                                              // Navigator.push(
-                                              //   context,
-                                              //   MaterialPageRoute<void>(
-                                              //       builder: (context) => MyTabBar()),
-                                              // );
-                                              // Navigator.
-                                              // Navigator.pop(context);
-                                            },
-                                          ),
-                                        )))),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                                flex: 1,
-                                child: Container(
-                                  height: h / 15,
-                                  child: ElevatedButton(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ImageIcon(AssetImage(
-                                            'assets/file-upload1.png')),
-                                        Text("CHECK \nDOCUMENTS",
-                                            style: TextStyle(
-                                              fontSize: w / 44,
-                                              fontWeight: FontWeight.w800,
-                                              color: Colors.white,
-                                            )),
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute<void>(builder: (context) => SignUp()),
-                                      // );
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10)),
-                                        primary: Color.fromARGB(216, 2, 7,
-                                            29), //Color.fromARGB(255, 0, 100, 181),
-                                        textStyle: TextStyle(
-                                            fontSize: 2,
-                                            fontWeight: FontWeight.bold)),
-                                  ),
-                                )),
-                          ],
-                        )),
-                    Padding(
-                        padding: EdgeInsets.only(
-                            top: 20, left: 20, right: 20, bottom: 100),
-                        child: Container(
-                          height: h / 1.5,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Colors.white),
-                          child: Center(
-                            child: Text('Video Call Screen'),
-                          ),
-                        )),
-                  ],
+                              )),
+                          Padding(
+                              padding: EdgeInsets.only(
+                                  top: 20, left: 20, right: 20, bottom: 100),
+                              child: Container(
+                                height: h / 1.5,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.white),
+                                child: Center(
+                                  child: Text('Video Call Screen'),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),

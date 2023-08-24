@@ -6,6 +6,7 @@ import 'package:my_click_doctor/services/router.dart';
 
 import 'package:rflutter_alert/rflutter_alert.dart';
 
+import 'baseUI/baseUI.dart';
 import 'basic_infomation.dart';
 import 'chat_live_screen.dart';
 import 'doctor_profile.dart';
@@ -37,949 +38,870 @@ class _ChatScreenPageState extends State<ChatScreen> {
         width: w,
         child: Stack(
           children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Image(
-                                height: h / 15,
-                                image: const AssetImage('assets/logo.png')),
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 10,
+            Column(
+              children: [
+                BaseUI(title: "Chat", hideLogo: false),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 0),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                top: 20, left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
                                 ),
-                                Container(
-                                  height: h / 14,
-                                  width: w / 2.8,
-                                  decoration: const BoxDecoration(
-                                    color: Color.fromARGB(216, 2, 7, 29),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(30.0),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Padding(
-                                          padding:
-                                              const EdgeInsets.only(left: 15),
-                                          child: Row(
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                  // Navigator.
+                                  // Navigator.pop(context);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
+
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              ClipOval(
-                                                child: Material(
-                                                  color: Colors
-                                                      .white, // Button color
-                                                  child: InkWell(
-                                                    splashColor: Colors
-                                                        .black, // Splash color
-                                                    onTap: () {
-                                                      Navigator.pushNamed(
-                                                          context,
-                                                          RoutePaths
-                                                              .supportScreen);
-                                                    },
-                                                    child: Container(
-                                                        margin:
-                                                            EdgeInsets.all(10),
-                                                        width: h / 46,
-                                                        height: h / 46,
-                                                        child: const Image(
-                                                            image: AssetImage(
-                                                                'assets/question-sign.png'))),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              CustomPopupMenu(
-                                                controller: popUpControler,
-                                                child: Image(
-                                                  height: h / 22,
-                                                  width: h / 22,
-                                                  fit: BoxFit.fill,
-                                                  image: AssetImage(
-                                                      'assets/female-user.png'),
-                                                ),
-                                                menuBuilder: () =>
-                                                    GestureDetector(
-                                                  child: _buildAvatar(),
-                                                ),
-                                                barrierColor:
-                                                    Colors.transparent,
-                                                pressType:
-                                                    PressType.singleClick,
-                                                arrowColor: Colors.blueAccent,
-                                                // position:
-                                                //     PreferredPosition.top,
-                                              ),
-                                            ],
-                                          ))
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ],
-                        )),
-                    Padding(
-                        padding: const EdgeInsets.only(top: 20),
-                        child: Container(
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Image(
-                                      height: h / 56,
-                                      image:
-                                          AssetImage('assets/four-dots.png')),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  Text('Chat',
-                                      style: TextStyle(
-                                        fontSize: w / 26,
-                                        fontWeight: FontWeight.w800,
-                                        color: Colors.black,
-                                      )),
-                                ],
-                              )
-                            ],
-                          ),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20, left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
-                          ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                            // Navigator.
-                            // Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Text('Last seen 2 days agc',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
                                     ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
 
-                                  Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        SizedBox(height: 5),
-                                        Text('Last seen 2 days agc',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
-
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute<void>(
-                            //       builder: (context) => MyTabBar()),
-                            // );
-                            // Navigator.
-                            // Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute<void>(
+                                  //       builder: (context) => MyTabBar()),
+                                  // );
+                                  // Navigator.
+                                  // Navigator.pop(context);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute<void>(
-                            //       builder: (context) => MyTabBar()),
-                            // );
-                            // Navigator.
-                            // Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute<void>(
+                                  //       builder: (context) => MyTabBar()),
+                                  // );
+                                  // Navigator.
+                                  // Navigator.pop(context);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute<void>(
-                            //       builder: (context) => MyTabBar()),
-                            // );
-                            // Navigator.
-                            // Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute<void>(
+                                  //       builder: (context) => MyTabBar()),
+                                  // );
+                                  // Navigator.
+                                  // Navigator.pop(context);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        const SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              const SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute<void>(
-                            //       builder: (context) => MyTabBar()),
-                            // );
-                            // Navigator.
-                            // Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute<void>(
+                                  //       builder: (context) => MyTabBar()),
+                                  // );
+                                  // Navigator.
+                                  // Navigator.pop(context);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        const SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              const SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        const SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              const SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        const SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              const SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            primary: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  backgroundColor: Colors.white,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          left: 20, right: 20, bottom: 10),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            elevation: 0.0,
-                            shadowColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
-                            minimumSize: const Size.fromHeight(60),
-                            backgroundColor: Colors.white,
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
                           ),
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, RoutePaths.chatLiveScreen);
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute<void>(
-                            //       builder: (context) => MyTabBar()),
-                            // );
-                            // Navigator.
-                            // Navigator.pop(context);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10,
-                                        left: 0,
-                                        right: 10,
-                                        bottom: 10),
-                                    child: CircleAvatar(
-                                      radius: h / 30,
-                                      backgroundColor:
-                                          Colors.grey, // Image radius
-                                      backgroundImage: const AssetImage(
-                                          'assets/doctor-pic.png'),
-                                    ),
-                                  ),
-                                  // Image(
-                                  //     height: h / 46,
-                                  //     image:
-                                  //         const AssetImage('assets/info.png')),
-                                  const SizedBox(width: 10),
-
-                                  Column(
+                          Padding(
+                            padding: const EdgeInsets.only(
+                                left: 20, right: 20, bottom: 10),
+                            child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  elevation: 0.0,
+                                  shadowColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  minimumSize: const Size.fromHeight(60),
+                                  backgroundColor: Colors.white,
+                                ),
+                                onPressed: () async {
+                                  Navigator.pushNamed(
+                                      context, RoutePaths.chatLiveScreen);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute<void>(
+                                  //       builder: (context) => MyTabBar()),
+                                  // );
+                                  // Navigator.
+                                  // Navigator.pop(context);
+                                },
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          MainAxisAlignment.start,
                                       children: [
-                                        Text('User guides',
-                                            style: TextStyle(
-                                              fontSize: w / 30,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                        SizedBox(height: 5),
-                                        Text('Online',
-                                            style: TextStyle(
-                                              fontSize: w / 40,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black,
-                                            )),
-                                      ])
-                                ],
-                              ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 10,
+                                              left: 0,
+                                              right: 10,
+                                              bottom: 10),
+                                          child: CircleAvatar(
+                                            radius: h / 30,
+                                            backgroundColor:
+                                                Colors.grey, // Image radius
+                                            backgroundImage: const AssetImage(
+                                                'assets/doctor-pic.png'),
+                                          ),
+                                        ),
+                                        // Image(
+                                        //     height: h / 46,
+                                        //     image:
+                                        //         const AssetImage('assets/info.png')),
+                                        const SizedBox(width: 10),
 
-                              //   ],
-                              // )
-                            ],
-                          )),
+                                        Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text('User guides',
+                                                  style: TextStyle(
+                                                    fontSize: w / 30,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                              SizedBox(height: 5),
+                                              Text('Online',
+                                                  style: TextStyle(
+                                                    fontSize: w / 40,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black,
+                                                  )),
+                                            ])
+                                      ],
+                                    ),
+
+                                    //   ],
+                                    // )
+                                  ],
+                                )),
+                          ),
+                          const SizedBox(
+                            height: 100,
+                          )
+                        ],
+                      ),
                     ),
-                    const SizedBox(
-                      height: 100,
-                    )
-                  ],
+                  ),
                 ),
-              ),
+             
+             
+             
+             ],
             ),
           ],
         ),
